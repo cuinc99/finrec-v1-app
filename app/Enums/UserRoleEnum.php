@@ -23,7 +23,7 @@ enum UserRoleEnum: string implements HasLabel, HasColor, HasIcon
     {
         return match ($this) {
             self::ADMIN => 'success',
-            self::USER => 'warning',
+            self::USER => 'info',
         };
     }
 

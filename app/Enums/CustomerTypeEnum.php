@@ -23,7 +23,7 @@ enum CustomerTypeEnum: string implements HasLabel, HasColor, HasIcon
     {
         return match ($this) {
             self::RESELLER => 'success',
-            self::PEMBELI => 'warning',
+            self::PEMBELI => 'info',
         };
     }
 
