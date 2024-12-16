@@ -46,7 +46,6 @@ return [
             'profit_price' => 'Harga Profit',
             'subtotal' => 'Subtotal',
             'subtotal_after_discount' => 'Subtotal Setelah Diskon',
-            'pay' => 'Bayar',
             'is_paid' => 'Sudah Dibayar',
             'product' => 'Produk',
             'customer' => 'Pelanggan',
