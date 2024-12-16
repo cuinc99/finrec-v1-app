@@ -21,7 +21,6 @@ return new class extends Migration
             $table->decimal('profit_price', 15, 2)->default(0.0);
             $table->decimal('subtotal', 15, 2)->default(0.0);
             $table->decimal('subtotal_after_discount', 15, 2)->default(0.0);
-            $table->decimal('pay', 15, 2)->default(0.0);
             $table->boolean('is_paid')->default(false);
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
