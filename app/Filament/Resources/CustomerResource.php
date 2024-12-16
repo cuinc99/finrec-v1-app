@@ -18,7 +18,6 @@ use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\FontWeight;
 use Filament\Pages\SubNavigationPosition;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Infolists\Components\Section;
 use App\Filament\Resources\CustomerResource\Pages;
 use App\Filament\Resources\CustomerResource\RelationManagers\TransactionsRelationManager;
 
@@ -129,7 +128,7 @@ class CustomerResource extends Resource
     {
         return $infolist
             ->schema([
-                Section::make('Data ' . __('models.customers.title'))
+                Infolists\Components\Section::make('Data ' . __('models.customers.title'))
                     ->columns(5)
                     ->collapsible()
                     ->schema([

@@ -34,6 +34,11 @@ class Customer extends Model
         return $this->transactions()->sum('subtotal_after_discount');
     }
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function transactions($created_from = NULL, $created_until = NULL): HasMany
     {
         return $this->hasMany(Transaction::class)
