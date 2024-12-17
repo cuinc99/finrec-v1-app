@@ -76,8 +76,8 @@ class TransactionResource extends Resource
                             ->money(__('models.common.money_locale'))
                             ->label('Total ' . __('models.transactions.fields.subtotal_after_discount'))
                     ]),
-                Tables\Columns\TextColumn::make('total_capital')
-                    ->label(__('models.transactions.fields.total_capital'))
+                Tables\Columns\TextColumn::make('capital')
+                    ->label(__('models.transactions.fields.capital'))
                     ->searchable()
                     ->sortable()
                     ->money(__('models.common.money_locale'))
@@ -85,7 +85,7 @@ class TransactionResource extends Resource
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
                             ->money(__('models.common.money_locale'))
-                            ->label(__('models.transactions.fields.total_capital'))
+                            ->label(__('models.transactions.fields.capital'))
                     ]),
                 Tables\Columns\TextColumn::make('profit')
                     ->label(__('models.transactions.fields.profit'))

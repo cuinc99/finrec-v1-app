@@ -80,8 +80,8 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
                                     ->width('150px'),
                                 Header::make('subtotal_after_discount')
                                     ->label(__('models.transactions.fields.subtotal_after_discount')),
-                                Header::make('total_capital')
-                                    ->label(__('models.transactions.fields.total_capital')),
+                                Header::make('capital')
+                                    ->label(__('models.transactions.fields.capital')),
                                 Header::make('profit')
                                     ->label(__('models.transactions.fields.profit')),
                             ])
@@ -161,7 +161,7 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
                                     })
                                     ->disabled(fn(Get $get) => !$get('product_id')),
 
-                                // subtotal after discount display
+                                // subtotal_after_discount display
                                 Forms\Components\Placeholder::make("subtotal_after_discount_display")
                                     ->label(__('models.transactions.fields.subtotal_after_discount'))
                                     ->hiddenLabel()
@@ -170,28 +170,28 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
                                         return __("Rp. " . number_format($subtotalAfterDiscount, 2, ',', '.'));
                                     }),
 
-                                // subtotal after discount hidden
+                                // subtotal_after_discount hidden
                                 Forms\Components\Hidden::make('subtotal_after_discount')
                                     ->required(),
+
+                                // capital_per_item hidden
+                                Forms\Components\Hidden::make('capital_per_item')
+                                    ->required(),
+
+                                // capital display
+                                Forms\Components\Placeholder::make("capital_display")
+                                    ->label(__('models.transactions.fields.capital'))
+                                    ->hiddenLabel()
+                                    ->content(function (Get $get) {
+                                        $profitPerItem = $get('capital');
+                                        return __("Rp. " . number_format($profitPerItem, 2, ',', '.'));
+                                    }),
 
                                 // capital hidden
                                 Forms\Components\Hidden::make('capital')
                                     ->required(),
 
-                                // total capital display
-                                Forms\Components\Placeholder::make("total_capital_display")
-                                    ->label(__('models.transactions.fields.total_capital'))
-                                    ->hiddenLabel()
-                                    ->content(function (Get $get) {
-                                        $profitPerItem = $get('total_capital');
-                                        return __("Rp. " . number_format($profitPerItem, 2, ',', '.'));
-                                    }),
-
-                                // total capital hidden
-                                Forms\Components\Hidden::make('total_capital')
-                                    ->required(),
-
-                                // profit per item hidden
+                                // profit_per_item hidden
                                 Forms\Components\Hidden::make('profit_per_item')
                                     ->required(),
 
@@ -217,16 +217,16 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
         $price = $product?->selling_price ?? 0;
         $subtotal = $price * $quantity;
         $subtotalAfterDiscount = $subtotal - $discount;
-        $capital = $product?->purchase_price ?? 0;
-        $totalCapital = $product?->purchase_price * $quantity;
-        $profitPerItem = $price - $capital;
-        $profit = $subtotalAfterDiscount - $totalCapital;
+        $capitalPerItem = $product?->purchase_price ?? 0;
+        $capital = $product?->purchase_price * $quantity;
+        $profitPerItem = $price - $capitalPerItem;
+        $profit = $subtotalAfterDiscount - $capital;
 
         $set('price', $price);
         $set('subtotal', $subtotal);
         $set('subtotal_after_discount', $subtotalAfterDiscount);
+        $set('capital_per_item', $capitalPerItem);
         $set('capital', $capital);
-        $set('total_capital', $totalCapital);
         $set('profit_per_item', $profitPerItem);
         $set('profit', $profit);
     }
@@ -246,8 +246,8 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
                     "discount" => $transaction['discount'],
                     "subtotal" => $transaction['subtotal'],
                     "subtotal_after_discount" => $transaction['subtotal_after_discount'],
+                    "capital_per_item" => $transaction['capital_per_item'],
                     "capital" => $transaction['capital'],
-                    "total_capital" => $transaction['total_capital'],
                     "profit_per_item" => $transaction['profit_per_item'],
                     "profit" => $transaction['profit'],
                     "user_id" => $transactions['user_id'],
@@ -258,10 +258,10 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
 
             Notification::make()
                 ->success()
-                ->title(__('models.transactions.title') . ' berhasil di ' . ('models.common.create'))
+                ->title(__('models.transactions.title') . ' berhasil di ' . __('models.common.create'))
                 ->send();
 
-            return redirect('/admin');
+            return redirect($this->getResource()::getUrl('index'));
         } catch (\Throwable $th) {
             throw $th;
         }

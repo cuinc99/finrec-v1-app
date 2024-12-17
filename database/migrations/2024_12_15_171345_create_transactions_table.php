@@ -20,8 +20,8 @@ return new class extends Migration
             $table->decimal('discount', 15, 2)->default(0.0);
             $table->decimal('subtotal', 15, 2)->default(0.0);
             $table->decimal('subtotal_after_discount', 15, 2)->default(0.0);
+            $table->decimal('capital_per_item', 15, 2)->default(0.0);
             $table->decimal('capital', 15, 2)->default(0.0);
-            $table->decimal('total_capital', 15, 2)->default(0.0);
             $table->decimal('profit_per_item', 15, 2)->default(0.0);
             $table->decimal('profit', 15, 2)->default(0.0);
             $table->boolean('is_paid')->default(false);
