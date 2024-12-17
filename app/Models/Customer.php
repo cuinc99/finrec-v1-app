@@ -26,7 +26,7 @@ class Customer extends Model
 
     public function getTotalProductsPurchasedAttribute()
     {
-        return $this->transactions()->sum('qty');
+        return $this->transactions()->sum('quantity');
     }
 
     public function getTotalBuyAttribute()

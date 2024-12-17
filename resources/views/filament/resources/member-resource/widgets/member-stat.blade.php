@@ -23,7 +23,7 @@
 
                     <div class="flex items-center justify-between">
                         <div class="text-2xl text-white">
-                            {{ $transactions->sum('qty') }}
+                            {{ $transactions->sum('quantity') }}
                         </div>
                     </div>
                 </div>

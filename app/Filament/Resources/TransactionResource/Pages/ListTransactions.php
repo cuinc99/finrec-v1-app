@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources\TransactionResource\Pages;
 
-use App\Filament\Resources\TransactionResource;
 use Filament\Actions;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Resources\Pages\ListRecords;
+use App\Filament\Resources\TransactionResource;
 
 class ListTransactions extends ListRecords
 {
@@ -15,5 +16,10 @@ class ListTransactions extends ListRecords
         return [
             Actions\CreateAction::make(),
         ];
+    }
+
+    public function getMaxContentWidth(): MaxWidth
+    {
+        return MaxWidth::Full;
     }
 }

@@ -2,27 +2,21 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Tables;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use App\Models\Transaction;
-use Filament\Resources\Resource;
-use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\TransactionResource\Pages;
+use App\Models\Transaction;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Support\Colors\Color;
+use Filament\Support\Enums\ActionSize;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class TransactionResource extends Resource
 {
     protected static ?string $model = Transaction::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
-
-    public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                //
-            ]);
-    }
+    protected static ?string $navigationIcon = 'heroicon-m-shopping-cart';
 
     public static function table(Table $table): Table
     {
@@ -45,10 +39,10 @@ class TransactionResource extends Resource
                 Tables\Columns\TextColumn::make('price')
                     ->label(__('models.transactions.fields.price'))
                     ->money(__('models.common.money_locale')),
-                Tables\Columns\TextColumn::make('qty')
-                    ->label(__('models.transactions.fields.qty')),
-                Tables\Columns\TextColumn::make('discount_price')
-                    ->label(__('models.transactions.fields.discount_price'))
+                Tables\Columns\TextColumn::make('quantity')
+                    ->label(__('models.transactions.fields.quantity')),
+                Tables\Columns\TextColumn::make('discount')
+                    ->label(__('models.transactions.fields.discount'))
                     ->money(__('models.common.money_locale')),
                 Tables\Columns\TextColumn::make('subtotal')
                     ->label(__('models.transactions.fields.subtotal'))
@@ -60,24 +54,29 @@ class TransactionResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->money(__('models.common.money_locale'))
-                    ->size('lg')
                     ->weight('bold')
-                    ->color('warning'),
-                Tables\Columns\TextColumn::make('profit_price')
-                    ->label(__('models.transactions.fields.profit_price'))
-                    ->money(__('models.common.money_locale')),
-                 Tables\Columns\TextColumn::make('pay')
-                    ->label(__('models.transactions.fields.pay'))
+                    ->color(Color::Blue),
+                Tables\Columns\TextColumn::make('total_capital')
+                    ->label(__('models.transactions.fields.total_capital'))
+                    ->searchable()
+                    ->sortable()
                     ->money(__('models.common.money_locale'))
-                    ->size('lg')
-                    ->weight('bold')
-                    ->color('danger'),
+                    ->color(Color::Red),
+                Tables\Columns\TextColumn::make('profit')
+                    ->label(__('models.transactions.fields.profit'))
+                    ->money(__('models.common.money_locale'))
+                    ->searchable()
+                    ->sortable()
+                    ->color(Color::Teal),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->button()
+                    ->color(Color::Red)
+                    ->size(ActionSize::Small),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -106,7 +105,7 @@ class TransactionResource extends Resource
     {
         return static::getModel()::query()
             ->where('user_id', auth()->user()->id)
-            ->latest();
+            ->latest('purchase_date');
     }
 
     public static function getLabel(): string

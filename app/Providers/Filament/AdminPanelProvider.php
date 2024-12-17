@@ -62,6 +62,7 @@ class AdminPanelProvider extends PanelProvider
             ->defaultThemeMode(ThemeMode::Light)
             ->profile(EditProfile::class)
             ->spa()
+            ->topNavigation(true)
             ->breadcrumbs(false)
             ->sidebarCollapsibleOnDesktop()
             ->defaultThemeMode(ThemeMode::Light)

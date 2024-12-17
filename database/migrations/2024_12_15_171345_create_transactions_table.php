@@ -16,11 +16,14 @@ return new class extends Migration
             $table->string('transaction_code')->nullable();
             $table->date('purchase_date');
             $table->decimal('price', 15, 2)->default(0.0);
-            $table->bigInteger('qty');
-            $table->decimal('discount_price', 15, 2)->default(0.0);
-            $table->decimal('profit_price', 15, 2)->default(0.0);
+            $table->bigInteger('quantity');
+            $table->decimal('discount', 15, 2)->default(0.0);
             $table->decimal('subtotal', 15, 2)->default(0.0);
             $table->decimal('subtotal_after_discount', 15, 2)->default(0.0);
+            $table->decimal('capital', 15, 2)->default(0.0);
+            $table->decimal('total_capital', 15, 2)->default(0.0);
+            $table->decimal('profit_per_item', 15, 2)->default(0.0);
+            $table->decimal('profit', 15, 2)->default(0.0);
             $table->boolean('is_paid')->default(false);
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->foreignId('customer_id')->constrained()->cascadeOnDelete();

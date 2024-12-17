@@ -2,21 +2,22 @@
 
 namespace App\Filament\Resources\TransactionResource\Pages;
 
-use Filament\Forms;
+use App\Filament\Resources\TransactionResource;
+use App\Models\Customer;
 use App\Models\Product;
+use App\Models\Transaction;
+use Awcodes\TableRepeater\Components\TableRepeater;
+use Awcodes\TableRepeater\Header;
+use Filament\Actions\Action;
+use Filament\Forms;
+use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use App\Models\Customer;
-use Filament\Forms\Form;
-use App\Models\Transaction;
-use Illuminate\Support\Str;
-use Filament\Actions\Action;
-use Awcodes\TableRepeater\Header;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
-use Filament\Notifications\Notification;
-use App\Filament\Resources\TransactionResource;
-use Awcodes\TableRepeater\Components\TableRepeater;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Str;
 
 class CreateTransaction extends Page implements Forms\Contracts\HasForms
 {
@@ -25,12 +26,6 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
     protected static string $resource = TransactionResource::class;
 
     protected static string $view = 'filament.resources.transaction-resource.pages.create-transaction';
-
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
-    protected static ?string $title = 'Buat Transaksi';
-
-    protected static bool $shouldRegisterNavigation = false;
 
     public ?array $data = [];
 
@@ -50,142 +45,190 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
                             ->required(),
                         Forms\Components\DatePicker::make('purchase_date')
                             ->label(__('models.transactions.fields.purchase_date'))
+                            ->default(now())
                             ->maxDate(now()->addDay())
+                            ->native(false)
+                            ->displayFormat('d/m/Y')
+                            ->prefixIcon('heroicon-m-calendar-days')
                             ->required(),
                         Forms\Components\Select::make('customer_id')
                             ->label(__('models.customers.title'))
                             ->options(Customer::where('user_id', auth()->id())->pluck('name', 'id'))
+                            ->prefixIcon('heroicon-m-user-circle')
                             ->searchable()
                             ->required(),
                     ])->columns(2),
-                Forms\Components\Section::make('Transaksi')
+                Forms\Components\Section::make()
                     ->schema([
                         TableRepeater::make('items')
                             ->hiddenLabel()
-                            ->columnSpan('full')
+                            ->columnSpanFull()
                             ->headers([
-                                Header::make('product')->label(__('models.transactions.fields.product')),
-                                Header::make('price')->label(__('models.transactions.fields.price')),
-                                Header::make('qty')->label(__('models.transactions.fields.qty')),
-                                Header::make('discount_price')->label(__('models.transactions.fields.discount_price')),
-                                Header::make('subtotal')->label(__('models.transactions.fields.subtotal')),
-                                Header::make('subtotal_after_discount')->label(__('models.transactions.fields.subtotal_after_discount')),
-                                Header::make('profit_price')->label(__('models.transactions.fields.profit_price')),
+                                Header::make('product')
+                                    ->label(__('models.transactions.fields.product'))
+                                    ->markAsRequired(),
+                                Header::make('price')
+                                    ->label(__('models.transactions.fields.price')),
+                                Header::make('quantity')
+                                    ->label(__('models.transactions.fields.quantity'))
+                                    ->width('100px')
+                                    ->markAsRequired(),
+                                Header::make('subtotal')
+                                    ->label(__('models.transactions.fields.subtotal')),
+                                Header::make('discount')
+                                    ->label(__('models.transactions.fields.discount'))
+                                    ->width('150px'),
+                                Header::make('subtotal_after_discount')
+                                    ->label(__('models.transactions.fields.subtotal_after_discount')),
+                                Header::make('total_capital')
+                                    ->label(__('models.transactions.fields.total_capital')),
+                                Header::make('profit')
+                                    ->label(__('models.transactions.fields.profit')),
                             ])
                             ->schema([
+                                // product select
                                 Forms\Components\Select::make('product_id')
                                     ->label(__('models.transactions.fields.product'))
                                     ->options(Product::where('user_id', auth()->id())->pluck('name', 'id'))
                                     ->searchable()
-                                    ->live()
+                                    ->preload()
+                                    ->live(debounce: 1000)
                                     ->afterStateUpdated(function (Set $set, Get $get, ?int $state) {
                                         $product = Product::find($state);
-                                        $qty = $get('qty');
-                                        $purchase_price = $product?->purchase_price;
-                                        $selling_price = $product?->selling_price;
-                                        $subtotal = $purchase_price * $qty;
-                                        $subtotal_after_discount = $subtotal - $get('discount_price');
-                                        $profit_price = $subtotal;
+                                        $quantity = $get('quantity');
+                                        $discount = $get('discount');
 
-                                        $set('price', $purchase_price);
-                                        $set('selling_price', $selling_price);
-                                        $set('subtotal', $subtotal);
-                                        $set('subtotal_after_discount', $subtotal_after_discount);
-                                        $set('profit_price', $profit_price);
+                                        $this->updateData($product, $quantity, $discount, $set);
                                     })
                                     ->required(),
 
-                                Forms\Components\Placeholder::make("p_price")
+                                // price display
+                                Forms\Components\Placeholder::make("price_display")
                                     ->label(__('models.transactions.fields.price'))
                                     ->hiddenLabel()
                                     ->content(function (Get $get): string {
                                         $price = $get('price');
                                         return __("Rp. " . number_format($price, 0, ',', '.'));
                                     }),
+
+                                // price hidden
                                 Forms\Components\Hidden::make('price')
-                                    ->disabled()
-                                    ->required(),
-                                Forms\Components\Hidden::make('selling_price')
-                                    ->disabled()
                                     ->required(),
 
-                                Forms\Components\TextInput::make('qty')
-                                    ->label(__('models.transactions.fields.qty'))
+                                // quantity input
+                                Forms\Components\TextInput::make('quantity')
+                                    ->label(__('models.transactions.fields.quantity'))
                                     ->minValue(1)
                                     ->default(1)
-                                    ->live()
+                                    ->live(debounce: 1000)
                                     ->integer()
                                     ->afterStateUpdated(function (Set $set, Get $get, ?int $state) {
-                                        $product_id = $get('product_id');
-                                        $price = Product::find($product_id)->purchase_price ?? 0;
-                                        $subtotal = $price * $state;
-                                        $subtotal_after_discount = $subtotal - $get('discount_price');
-                                        $profit_price = $subtotal;
+                                        $product = Product::find($get('product_id'));
+                                        $quantity = $state;
+                                        $discount = $get('discount');
 
-                                        $set('subtotal', $subtotal);
-                                        $set('subtotal_after_discount', $subtotal_after_discount);
-                                        $set('profit_price', $profit_price);
+                                        $this->updateData($product, $quantity, $discount, $set);
                                     })
-                                    ->disabled(function (Get $get) {
-                                        return !$get('product_id');
-                                    })
+                                    ->disabled(fn(Get $get) => !$get('product_id'))
                                     ->required(),
 
-                                Forms\Components\TextInput::make('discount_price')
-                                    ->label(__('models.transactions.fields.discount_price'))
-                                    ->live()
-                                    ->integer()
-                                    ->afterStateUpdated(function (Set $set, Get $get, ?int $state) {
-                                        $product_id = $get('product_id');
-                                        $price = Product::find($product_id)->purchase_price ?? 0;
-                                        $subtotal = $price * $get('qty');
-                                        $subtotal_after_discount = $subtotal - $state;
-                                        $profit_price = $subtotal;
-
-                                        $set('subtotal', $subtotal);
-                                        $set('subtotal_after_discount', $subtotal_after_discount);
-                                        $set('profit_price', $profit_price);
-                                    })
-                                    ->disabled(function (Get $get) {
-                                        return !$get('product_id');
-                                    })
-                                    ->required(),
-
-                                Forms\Components\Placeholder::make("p_subtotal")
+                                // subtotal display
+                                Forms\Components\Placeholder::make("subtotal_display")
                                     ->label(__('models.transactions.fields.subtotal'))
                                     ->hiddenLabel()
                                     ->content(function (Get $get) {
                                         $subtotal = $get('subtotal');
-                                        return __("Rp. " . number_format($subtotal, 0, ',', '.'));
+                                        return __("Rp. " . number_format($subtotal, 2, ',', '.'));
                                     }),
+
+                                // subtotal hideen
                                 Forms\Components\Hidden::make('subtotal')
-                                    ->disabled()
                                     ->required(),
 
-                                Forms\Components\Placeholder::make("p_subtotal_after_discount")
+                                // discount input
+                                Forms\Components\TextInput::make('discount')
+                                    ->label(__('models.transactions.fields.discount'))
+                                    ->live(debounce: 1000)
+                                    ->minValue(0)
+                                    ->default(0)
+                                    ->integer()
+                                    ->afterStateUpdated(function (Set $set, Get $get, ?int $state) {
+                                        $product = Product::find($get('product_id'));
+                                        $quantity = $get('quantity');
+                                        $discount = $state;
+
+                                        $this->updateData($product, $quantity, $discount, $set);
+                                    })
+                                    ->disabled(fn(Get $get) => !$get('product_id')),
+
+                                // subtotal after discount display
+                                Forms\Components\Placeholder::make("subtotal_after_discount_display")
                                     ->label(__('models.transactions.fields.subtotal_after_discount'))
                                     ->hiddenLabel()
                                     ->content(function (Get $get) {
-                                        $subtotal_after_discount = $get('subtotal_after_discount');
-                                        return __("Rp. " . number_format($subtotal_after_discount, 0, ',', '.'));
+                                        $subtotalAfterDiscount = $get('subtotal_after_discount');
+                                        return __("Rp. " . number_format($subtotalAfterDiscount, 2, ',', '.'));
                                     }),
+
+                                // subtotal after discount hidden
                                 Forms\Components\Hidden::make('subtotal_after_discount')
-                                    ->disabled()
                                     ->required(),
 
-                                Forms\Components\Placeholder::make("p_profit_price")
-                                    ->label(__('models.transactions.fields.profit_price'))
+                                // capital hidden
+                                Forms\Components\Hidden::make('capital')
+                                    ->required(),
+
+                                // total capital display
+                                Forms\Components\Placeholder::make("total_capital_display")
+                                    ->label(__('models.transactions.fields.total_capital'))
                                     ->hiddenLabel()
                                     ->content(function (Get $get) {
-                                        $profit_price = $get('profit_price');
-                                        return __("Rp. " . number_format($profit_price, 0, ',', '.'));
+                                        $profitPerItem = $get('total_capital');
+                                        return __("Rp. " . number_format($profitPerItem, 2, ',', '.'));
                                     }),
-                                Forms\Components\Hidden::make('profit_price')
-                                    ->disabled()
+
+                                // total capital hidden
+                                Forms\Components\Hidden::make('total_capital')
+                                    ->required(),
+
+                                // profit per item hidden
+                                Forms\Components\Hidden::make('profit_per_item')
+                                    ->required(),
+
+                                // profit display
+                                Forms\Components\Placeholder::make("profit_display")
+                                    ->label(__('models.transactions.fields.profit'))
+                                    ->hiddenLabel()
+                                    ->content(function (Get $get) {
+                                        $profit = $get('profit');
+                                        return __("Rp. " . number_format($profit, 2, ',', '.'));
+                                    }),
+
+                                // profit hidden
+                                Forms\Components\Hidden::make('profit')
                                     ->required(),
                             ]),
                     ]),
             ])->statePath('data');
+    }
+
+    public function updateData($product, $quantity, $discount, Set $set)
+    {
+        $price = $product?->selling_price ?? 0;
+        $subtotal = $price * $quantity;
+        $subtotalAfterDiscount = $subtotal - $discount;
+        $capital = $product?->purchase_price ?? 0;
+        $totalCapital = $product?->purchase_price * $quantity;
+        $profitPerItem = $price - $capital;
+        $profit = $subtotalAfterDiscount - $totalCapital;
+
+        $set('price', $price);
+        $set('subtotal', $subtotal);
+        $set('subtotal_after_discount', $subtotalAfterDiscount);
+        $set('capital', $capital);
+        $set('total_capital', $totalCapital);
+        $set('profit_per_item', $profitPerItem);
+        $set('profit', $profit);
     }
 
     public function save()
@@ -194,28 +237,28 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
             $transactionCode = Str::random(2) . rand(10, 99) . Str::random(2) . rand(10, 99);
             $transactions = $this->form->getState();
 
-            dd($transactions);
-
             foreach ($transactions['items'] as $transaction) {
                 Transaction::create([
                     'transaction_code' => $transactionCode,
-                    "user_id" => $transactions['user_id'],
                     "purchase_date" => $transactions['purchase_date'],
-                    "customer_id" => $transactions['customer_id'],
-
-                    "product_id" => $transaction['product_id'],
-                    "qty" => $transaction['qty'],
+                    "quantity" => $transaction['quantity'],
                     "price" => $transaction['price'],
-                    "discount_price" => $transaction['discount_price'],
+                    "discount" => $transaction['discount'],
                     "subtotal" => $transaction['subtotal'],
                     "subtotal_after_discount" => $transaction['subtotal_after_discount'],
-                    "profit_price" => $transaction['profit_price'],
+                    "capital" => $transaction['capital'],
+                    "total_capital" => $transaction['total_capital'],
+                    "profit_per_item" => $transaction['profit_per_item'],
+                    "profit" => $transaction['profit'],
+                    "user_id" => $transactions['user_id'],
+                    "customer_id" => $transactions['customer_id'],
+                    "product_id" => $transaction['product_id'],
                 ]);
             }
 
             Notification::make()
                 ->success()
-                ->title('Transaksi berhasil dibuat')
+                ->title(__('models.transactions.title') . ' berhasil di ' . ('models.common.create'))
                 ->send();
 
             return redirect('/admin');
@@ -230,11 +273,24 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
             Action::make('save')
                 ->label(__('models.common.save'))
                 ->submit('save'),
+            Action::make('cancel')
+                ->label(__('models.common.cancel'))
+                ->url($this->getResource()::getUrl('index'))
+                ->color('danger'),
         ];
     }
 
     public function getMaxContentWidth(): MaxWidth
     {
         return MaxWidth::Full;
+    }
+
+    public function getTitle(): string | Htmlable
+    {
+        if (filled(static::$title)) {
+            return static::$title;
+        }
+
+        return __('models.common.create') . ' ' . __('models.transactions.title');
     }
 }

@@ -12,7 +12,7 @@ class Product extends Model
 
     public function getSoldAttribute()
     {
-        return $this->transactions()->sum('qty');
+        return $this->transactions()->sum('quantity');
     }
 
     public function user(): BelongsTo
