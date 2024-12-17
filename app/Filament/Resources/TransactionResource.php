@@ -40,34 +40,64 @@ class TransactionResource extends Resource
                     ->label(__('models.transactions.fields.price'))
                     ->money(__('models.common.money_locale')),
                 Tables\Columns\TextColumn::make('quantity')
-                    ->label(__('models.transactions.fields.quantity')),
+                    ->label(__('models.transactions.fields.quantity'))
+                    ->alignCenter()
+                    ->summarize([
+                        Tables\Columns\Summarizers\Sum::make()
+                            ->label('Total ' . __('models.transactions.fields.quantity'))
+                    ]),
                 Tables\Columns\TextColumn::make('discount')
                     ->label(__('models.transactions.fields.discount'))
-                    ->money(__('models.common.money_locale')),
+                    ->money(__('models.common.money_locale'))
+                    ->summarize([
+                        Tables\Columns\Summarizers\Sum::make()
+                            ->money(__('models.common.money_locale'))
+                            ->label('Total ' . __('models.transactions.fields.discount'))
+                    ]),
                 Tables\Columns\TextColumn::make('subtotal')
                     ->label(__('models.transactions.fields.subtotal'))
                     ->searchable()
                     ->sortable()
-                    ->money(__('models.common.money_locale')),
+                    ->money(__('models.common.money_locale'))
+                    ->summarize([
+                        Tables\Columns\Summarizers\Sum::make()
+                            ->money(__('models.common.money_locale'))
+                            ->label('Total ' . __('models.transactions.fields.subtotal'))
+                    ]),
                 Tables\Columns\TextColumn::make('subtotal_after_discount')
                     ->label(__('models.transactions.fields.subtotal_after_discount'))
                     ->searchable()
                     ->sortable()
                     ->money(__('models.common.money_locale'))
                     ->weight('bold')
-                    ->color(Color::Blue),
+                    ->color(Color::Blue)
+                    ->summarize([
+                        Tables\Columns\Summarizers\Sum::make()
+                            ->money(__('models.common.money_locale'))
+                            ->label('Total ' . __('models.transactions.fields.subtotal_after_discount'))
+                    ]),
                 Tables\Columns\TextColumn::make('total_capital')
                     ->label(__('models.transactions.fields.total_capital'))
                     ->searchable()
                     ->sortable()
                     ->money(__('models.common.money_locale'))
-                    ->color(Color::Red),
+                    ->color(Color::Red)
+                    ->summarize([
+                        Tables\Columns\Summarizers\Sum::make()
+                            ->money(__('models.common.money_locale'))
+                            ->label(__('models.transactions.fields.total_capital'))
+                    ]),
                 Tables\Columns\TextColumn::make('profit')
                     ->label(__('models.transactions.fields.profit'))
                     ->money(__('models.common.money_locale'))
                     ->searchable()
                     ->sortable()
-                    ->color(Color::Teal),
+                    ->color(Color::Teal)
+                    ->summarize([
+                        Tables\Columns\Summarizers\Sum::make()
+                            ->money(__('models.common.money_locale'))
+                            ->label('Total ' . __('models.transactions.fields.profit'))
+                    ]),
             ])
             ->filters([
                 //

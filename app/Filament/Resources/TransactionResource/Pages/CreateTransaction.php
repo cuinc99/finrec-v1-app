@@ -276,7 +276,7 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
             Action::make('cancel')
                 ->label(__('models.common.cancel'))
                 ->url($this->getResource()::getUrl('index'))
-                ->color('danger'),
+                ->color('gray'),
         ];
     }
 

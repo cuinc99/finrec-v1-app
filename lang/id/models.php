@@ -48,7 +48,7 @@ return [
             'capital' => 'Harga Beli (Modal)',
             'total_capital' => 'Total Harga Beli (Modal)',
             'profit_per_item' => 'Profit per Item',
-            'profit' => 'Total Profit',
+            'profit' => 'Profit',
             'is_paid' => 'Sudah Dibayar',
             'product' => 'Produk',
             'customer' => 'Pelanggan',
