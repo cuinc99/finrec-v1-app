@@ -25,6 +25,7 @@ class TransactionStats extends BaseWidget
     protected function getStats(): array
     {
         $transactionData = Trend::model(Transaction::class)
+            ->dateColumn('purchase_date')
             ->between(
                 start: now()->subYear(),
                 end: now(),
@@ -33,13 +34,13 @@ class TransactionStats extends BaseWidget
             ->count();
 
         return [
-            Stat::make(__('models.transactions.title'), $this->getPageTableQuery()->count())
+            Stat::make(__('models.transactions.title'), number_format($this->getPageTableQuery()->count()))
                 ->chart(
                     $transactionData
                         ->map(fn(TrendValue $value) => $value->aggregate)
                         ->toArray()
                 )
-                ->description($this->getPageTableQuery()->where('purchase_date', today())->count() . ' ' . __('models.common.today'))
+                ->description(Transaction::where('purchase_date', today())->count() . ' ' . __('models.common.today'))
                 ->descriptionIcon('heroicon-m-arrow-trending-up', IconPosition::Before),
             Stat::make(__('models.transactions.fields.is_paid_options.paid'), __("Rp. " . number_format($this->getPageTableQuery()->where('is_paid', true)->sum('subtotal_after_discount'), 0, ',', '.'))),
             Stat::make(__('models.transactions.fields.is_paid_options.unpaid'), __("Rp. " . number_format($this->getPageTableQuery()->where('is_paid', false)->sum('subtotal_after_discount'), 0, ',', '.'))),

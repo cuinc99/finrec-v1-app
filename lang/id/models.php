@@ -46,10 +46,11 @@ return [
             'subtotal' => 'Subtotal',
             'subtotal_after_discount' => 'Subtotal Setelah Diskon',
             'capital_per_item' => 'Modal per Item',
-            'capital' => 'Modal (Rp)',
+            'capital' => 'Modal',
             'profit_per_item' => 'Profit per Item',
             'profit' => 'Profit',
             'is_paid' => 'Status',
+            'is_paid_question' => 'Pembayaran Lunas?',
             'product' => 'Produk',
             'customer' => 'Pelanggan',
             'is_paid_options' => [

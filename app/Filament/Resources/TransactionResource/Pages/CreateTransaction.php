@@ -15,6 +15,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
+use Filament\Support\Colors\Color;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
@@ -84,6 +85,8 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
                                     ->label(__('models.transactions.fields.capital')),
                                 Header::make('profit')
                                     ->label(__('models.transactions.fields.profit')),
+                                Header::make('is_paid_question')
+                                    ->label(__('models.transactions.fields.is_paid_question')),
                             ])
                             ->schema([
                                 // product select
@@ -138,7 +141,7 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
                                     ->hiddenLabel()
                                     ->content(function (Get $get) {
                                         $subtotal = $get('subtotal');
-                                        return __("Rp. " . number_format($subtotal, 2, ',', '.'));
+                                        return __("Rp. " . number_format($subtotal, 0, ',', '.'));
                                     }),
 
                                 // subtotal hideen
@@ -167,7 +170,7 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
                                     ->hiddenLabel()
                                     ->content(function (Get $get) {
                                         $subtotalAfterDiscount = $get('subtotal_after_discount');
-                                        return __("Rp. " . number_format($subtotalAfterDiscount, 2, ',', '.'));
+                                        return __("Rp. " . number_format($subtotalAfterDiscount, 0, ',', '.'));
                                     }),
 
                                 // subtotal_after_discount hidden
@@ -184,7 +187,7 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
                                     ->hiddenLabel()
                                     ->content(function (Get $get) {
                                         $profitPerItem = $get('capital');
-                                        return __("Rp. " . number_format($profitPerItem, 2, ',', '.'));
+                                        return __("Rp. " . number_format($profitPerItem, 0, ',', '.'));
                                     }),
 
                                 // capital hidden
@@ -201,12 +204,20 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
                                     ->hiddenLabel()
                                     ->content(function (Get $get) {
                                         $profit = $get('profit');
-                                        return __("Rp. " . number_format($profit, 2, ',', '.'));
+                                        return __("Rp. " . number_format($profit, 0, ',', '.'));
                                     }),
 
                                 // profit hidden
                                 Forms\Components\Hidden::make('profit')
                                     ->required(),
+
+                                // is_paid hidden
+                                Forms\Components\Toggle::make('is_paid')
+                                    ->label(__('models.transactions.fields.is_paid_question'))
+                                    ->onIcon('heroicon-m-check')
+                                    ->offIcon('heroicon-m-x-mark')
+                                    ->onColor(Color::Sky)
+                                    ->offColor(Color::Red),
                             ]),
                     ]),
             ])->statePath('data');
@@ -250,6 +261,7 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
                     "capital" => $transaction['capital'],
                     "profit_per_item" => $transaction['profit_per_item'],
                     "profit" => $transaction['profit'],
+                    "is_paid" => $transaction['is_paid'],
                     "user_id" => $transactions['user_id'],
                     "customer_id" => $transactions['customer_id'],
                     "product_id" => $transaction['product_id'],

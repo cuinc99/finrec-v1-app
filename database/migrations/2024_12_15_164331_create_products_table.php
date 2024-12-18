@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->decimal('purchase_price', 15, 2)->default(0.0);
-            $table->decimal('selling_price', 15, 2)->default(0.0);
+            $table->decimal('purchase_price', 15, 0)->default(0);
+            $table->decimal('selling_price', 15, 0)->default(0);
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });

@@ -72,7 +72,7 @@ class CustomerResource extends Resource
                     ->alignCenter(),
                 Tables\Columns\TextColumn::make('total_buy')
                     ->label(__('models.customers.fields.total_buy'))
-                    ->money(__('models.common.money_locale'))
+                    ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                     ->weight(FontWeight::SemiBold)
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query->select(
@@ -145,7 +145,7 @@ class CustomerResource extends Resource
                             ->suffix(' item'),
                         Infolists\Components\TextEntry::make('total_buy')
                             ->label(__('models.customers.fields.total_buy'))
-                            ->money(__('models.common.money_locale')),
+                            ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.'))),
                     ]),
 
             ]);

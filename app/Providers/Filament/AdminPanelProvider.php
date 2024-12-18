@@ -14,6 +14,7 @@ use Filament\Http\Middleware\Authenticate;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Http\Middleware\AuthenticateSession;
+use Awcodes\FilamentQuickCreate\QuickCreatePlugin;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -69,6 +70,11 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 FilamentSpatieLaravelBackupPlugin::make()
                     ->usingPage(Backups::class),
+                QuickCreatePlugin::make()
+                    ->excludes([
+                        \App\Filament\Resources\UserResource::class,
+                    ])
+                    ->createAnother(false),
             ]);
     }
 }

@@ -50,7 +50,7 @@ class TransactionResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('price')
                     ->label(__('models.transactions.fields.price'))
-                    ->money(__('models.common.money_locale')),
+                    ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.'))),
                 Tables\Columns\TextColumn::make('quantity')
                     ->label(__('models.transactions.fields.quantity'))
                     ->alignCenter()
@@ -60,54 +60,54 @@ class TransactionResource extends Resource
                     ]),
                 Tables\Columns\TextColumn::make('discount')
                     ->label(__('models.transactions.fields.discount'))
-                    ->money(__('models.common.money_locale'))
+                    ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
-                            ->money(__('models.common.money_locale'))
+                            ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                             ->label('Total ' . __('models.transactions.fields.discount')),
                     ]),
                 Tables\Columns\TextColumn::make('subtotal')
                     ->label(__('models.transactions.fields.subtotal'))
                     ->searchable()
                     ->sortable()
-                    ->money(__('models.common.money_locale'))
+                    ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
-                            ->money(__('models.common.money_locale'))
+                            ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                             ->label('Total ' . __('models.transactions.fields.subtotal')),
                     ]),
                 Tables\Columns\TextColumn::make('subtotal_after_discount')
                     ->label(__('models.transactions.fields.subtotal_after_discount'))
                     ->searchable()
                     ->sortable()
-                    ->money(__('models.common.money_locale'))
+                    ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                     ->weight('bold')
                     ->color(Color::Blue)
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
-                            ->money(__('models.common.money_locale'))
+                            ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                             ->label('Total ' . __('models.transactions.fields.subtotal_after_discount')),
                     ]),
                 Tables\Columns\TextColumn::make('capital')
                     ->label(__('models.transactions.fields.capital'))
                     ->searchable()
                     ->sortable()
-                    ->money(__('models.common.money_locale'))
+                    ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                     ->color(Color::Red)
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
-                            ->money(__('models.common.money_locale'))
+                            ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                             ->label(__('models.transactions.fields.capital')),
                     ]),
                 Tables\Columns\TextColumn::make('profit')
                     ->label(__('models.transactions.fields.profit'))
-                    ->money(__('models.common.money_locale'))
+                    ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                     ->searchable()
                     ->sortable()
                     ->color(Color::Teal)
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
-                            ->money(__('models.common.money_locale'))
+                            ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                             ->label('Total ' . __('models.transactions.fields.profit')),
                     ]),
             ])

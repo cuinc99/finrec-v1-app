@@ -59,11 +59,11 @@ class ProductResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('purchase_price')
                     ->label(__('models.products.fields.purchase_price'))
-                    ->money(__('models.common.money_locale'))
+                    ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('selling_price')
                     ->label(__('models.products.fields.selling_price'))
-                    ->money(__('models.common.money_locale'))
+                    ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('sold')
                     ->label(__('models.products.fields.sold'))
@@ -108,10 +108,10 @@ class ProductResource extends Resource
                             ->label(__('models.products.fields.name')),
                         Infolists\Components\TextEntry::make('purchase_price')
                             ->label(__('models.products.fields.purchase_price'))
-                            ->money(__('models.common.money_locale')),
+                            ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.'))),
                         Infolists\Components\TextEntry::make('selling_price')
                             ->label(__('models.products.fields.selling_price'))
-                            ->money(__('models.common.money_locale')),
+                            ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.'))),
                         Infolists\Components\TextEntry::make('sold')
                             ->label(__('models.products.fields.sold'))
                             ->suffix(' item'),
