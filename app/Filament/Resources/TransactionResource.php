@@ -2,19 +2,20 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\CustomerTypeEnum;
+use App\Filament\Resources\TransactionResource\Pages;
+use App\Filament\Resources\TransactionResource\Widgets\TransactionStats;
+use App\Models\Transaction;
 use Carbon\Carbon;
 use Filament\Forms;
-use Filament\Tables;
-use Filament\Tables\Table;
-use App\Models\Transaction;
-use App\Enums\CustomerTypeEnum;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\ActionSize;
+use Filament\Tables;
 use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\TransactionResource\Pages;
-use App\Filament\Resources\TransactionResource\Widgets\TransactionStats;
 
 class TransactionResource extends Resource
 {
@@ -50,7 +51,7 @@ class TransactionResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('price')
                     ->label(__('models.transactions.fields.price'))
-                    ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.'))),
+                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.'))),
                 Tables\Columns\TextColumn::make('quantity')
                     ->label(__('models.transactions.fields.quantity'))
                     ->alignCenter()
@@ -58,56 +59,75 @@ class TransactionResource extends Resource
                         Tables\Columns\Summarizers\Sum::make()
                             ->label('Total ' . __('models.transactions.fields.quantity')),
                     ]),
-                Tables\Columns\TextColumn::make('discount')
-                    ->label(__('models.transactions.fields.discount'))
-                    ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
+                Tables\Columns\TextColumn::make('discount_per_item')
+                    ->label(__('models.transactions.fields.discount_per_item'))
+                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.'))),
+                Tables\Columns\TextColumn::make('total_discount_per_item')
+                    ->label(__('models.transactions.fields.total_discount_per_item'))
+                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
-                            ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
+                            ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
+                            ->label( __('models.transactions.fields.total_discount_per_item')),
+                    ]),
+                Tables\Columns\TextColumn::make('discount')
+                    ->label(__('models.transactions.fields.discount'))
+                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
+                    ->summarize([
+                        Tables\Columns\Summarizers\Sum::make()
+                            ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                             ->label('Total ' . __('models.transactions.fields.discount')),
+                    ]),
+                Tables\Columns\TextColumn::make('total_discount')
+                    ->label(__('models.transactions.fields.total_discount'))
+                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
+                    ->summarize([
+                        Tables\Columns\Summarizers\Sum::make()
+                            ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
+                            ->label(__('models.transactions.fields.total_discount')),
                     ]),
                 Tables\Columns\TextColumn::make('subtotal')
                     ->label(__('models.transactions.fields.subtotal'))
                     ->searchable()
                     ->sortable()
-                    ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
+                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
-                            ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
+                            ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                             ->label('Total ' . __('models.transactions.fields.subtotal')),
                     ]),
                 Tables\Columns\TextColumn::make('subtotal_after_discount')
                     ->label(__('models.transactions.fields.subtotal_after_discount'))
                     ->searchable()
                     ->sortable()
-                    ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
+                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                     ->weight('bold')
                     ->color(Color::Blue)
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
-                            ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
+                            ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                             ->label('Total ' . __('models.transactions.fields.subtotal_after_discount')),
                     ]),
                 Tables\Columns\TextColumn::make('capital')
                     ->label(__('models.transactions.fields.capital'))
                     ->searchable()
                     ->sortable()
-                    ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
+                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                     ->color(Color::Red)
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
-                            ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
+                            ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                             ->label(__('models.transactions.fields.capital')),
                     ]),
                 Tables\Columns\TextColumn::make('profit')
                     ->label(__('models.transactions.fields.profit'))
-                    ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
+                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                     ->searchable()
                     ->sortable()
                     ->color(Color::Teal)
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
-                            ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
+                            ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                             ->label('Total ' . __('models.transactions.fields.profit')),
                     ]),
             ])
@@ -129,7 +149,7 @@ class TransactionResource extends Resource
                     ->options(CustomerTypeEnum::class)
                     ->searchable()
                     ->modifyQueryUsing(function ($query, $data) {
-                        if (! empty($data['value'])) {
+                        if (!empty($data['value'])) {
                             $query->whereHas('customer', function ($query) use ($data) {
                                 $query->where('type', $data);
                             });
@@ -139,11 +159,14 @@ class TransactionResource extends Resource
                     ->form([
                         Forms\Components\DatePicker::make('created_from')
                             ->label(__('models.common.created_from'))
+                            ->maxDate(fn(Get $get) => $get('created_until') ?: now())
                             ->native(false)
                             ->displayFormat('d/m/Y')
                             ->prefixIcon('heroicon-m-calendar-days'),
                         Forms\Components\DatePicker::make('created_until')
                             ->label(__('models.common.created_until'))
+                            ->minDate(fn(Get $get) => $get('created_from') ?: now())
+                            ->maxDate(now())
                             ->native(false)
                             ->displayFormat('d/m/Y')
                             ->prefixIcon('heroicon-m-calendar-days'),
@@ -183,7 +206,7 @@ class TransactionResource extends Resource
             ->deferFilters()
             ->persistFiltersInSession()
             ->filtersTriggerAction(
-                fn (Tables\Actions\Action $action) => $action
+                fn(Tables\Actions\Action $action) => $action
                     ->button()
                     ->label('Filter'),
             )

@@ -41,7 +41,8 @@ class TransactionStats extends BaseWidget
                         ->toArray()
                 )
                 ->description(Transaction::where('purchase_date', today())->count() . ' ' . __('models.common.today'))
-                ->descriptionIcon('heroicon-m-arrow-trending-up', IconPosition::Before),
+                ->descriptionIcon('heroicon-m-arrow-trending-up', IconPosition::Before)
+                ->color('success'),
             Stat::make(__('models.transactions.fields.is_paid_options.paid'), __("Rp. " . number_format($this->getPageTableQuery()->where('is_paid', true)->sum('subtotal_after_discount'), 0, ',', '.'))),
             Stat::make(__('models.transactions.fields.is_paid_options.unpaid'), __("Rp. " . number_format($this->getPageTableQuery()->where('is_paid', false)->sum('subtotal_after_discount'), 0, ',', '.'))),
             Stat::make(__('models.transactions.fields.profit'), __("Rp. " . number_format($this->getPageTableQuery()->sum('profit'), 0, ',', '.'))),
