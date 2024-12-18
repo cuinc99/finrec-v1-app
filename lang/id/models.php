@@ -49,9 +49,13 @@ return [
             'capital' => 'Modal',
             'profit_per_item' => 'Profit per Item',
             'profit' => 'Profit',
-            'is_paid' => 'Sudah Dibayar',
+            'is_paid' => 'Status',
             'product' => 'Produk',
             'customer' => 'Pelanggan',
+            'is_paid_options' => [
+                'paid' => 'Lunas',
+                'unpaid' => 'Belum Lunas',
+            ]
         ],
     ],
     'common' => [
@@ -71,5 +75,7 @@ return [
         'no' => 'Tidak',
         'all' => 'Semua',
         'money_locale' => 'idr',
+        'created_from' => 'Dari tanggal',
+        'created_until' => 'Sampai tanggal',
     ],
 ];

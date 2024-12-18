@@ -2,13 +2,16 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\CustomerTypeEnum;
 use App\Filament\Resources\TransactionResource\Pages;
 use App\Models\Transaction;
-use Filament\Forms\Form;
+use Carbon\Carbon;
+use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\ActionSize;
 use Filament\Tables;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -22,6 +25,14 @@ class TransactionResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('is_paid')
+                    ->label(__('models.transactions.fields.is_paid'))
+                    ->formatStateUsing(fn(bool $state) => $state ? __('models.transactions.fields.is_paid_options.paid') : __('models.transactions.fields.is_paid_options.unpaid'))
+                    ->badge()
+                    ->color(fn(bool $state) => match ($state) {
+                        true => Color::Sky,
+                        false => Color::Red,
+                    }),
                 Tables\Columns\TextColumn::make('purchase_date')
                     ->label(__('models.transactions.fields.purchase_date'))
                     ->date()
@@ -44,7 +55,7 @@ class TransactionResource extends Resource
                     ->alignCenter()
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
-                            ->label('Total ' . __('models.transactions.fields.quantity'))
+                            ->label('Total ' . __('models.transactions.fields.quantity')),
                     ]),
                 Tables\Columns\TextColumn::make('discount')
                     ->label(__('models.transactions.fields.discount'))
@@ -52,7 +63,7 @@ class TransactionResource extends Resource
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
                             ->money(__('models.common.money_locale'))
-                            ->label('Total ' . __('models.transactions.fields.discount'))
+                            ->label('Total ' . __('models.transactions.fields.discount')),
                     ]),
                 Tables\Columns\TextColumn::make('subtotal')
                     ->label(__('models.transactions.fields.subtotal'))
@@ -62,7 +73,7 @@ class TransactionResource extends Resource
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
                             ->money(__('models.common.money_locale'))
-                            ->label('Total ' . __('models.transactions.fields.subtotal'))
+                            ->label('Total ' . __('models.transactions.fields.subtotal')),
                     ]),
                 Tables\Columns\TextColumn::make('subtotal_after_discount')
                     ->label(__('models.transactions.fields.subtotal_after_discount'))
@@ -74,7 +85,7 @@ class TransactionResource extends Resource
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
                             ->money(__('models.common.money_locale'))
-                            ->label('Total ' . __('models.transactions.fields.subtotal_after_discount'))
+                            ->label('Total ' . __('models.transactions.fields.subtotal_after_discount')),
                     ]),
                 Tables\Columns\TextColumn::make('capital')
                     ->label(__('models.transactions.fields.capital'))
@@ -85,7 +96,7 @@ class TransactionResource extends Resource
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
                             ->money(__('models.common.money_locale'))
-                            ->label(__('models.transactions.fields.capital'))
+                            ->label(__('models.transactions.fields.capital')),
                     ]),
                 Tables\Columns\TextColumn::make('profit')
                     ->label(__('models.transactions.fields.profit'))
@@ -96,12 +107,94 @@ class TransactionResource extends Resource
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
                             ->money(__('models.common.money_locale'))
-                            ->label('Total ' . __('models.transactions.fields.profit'))
+                            ->label('Total ' . __('models.transactions.fields.profit')),
                     ]),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('is_paid')
+                    ->label(__('models.transactions.fields.is_paid'))
+                    ->options([
+                        true => __('models.transactions.fields.is_paid_options.paid'),
+                        false => __('models.transactions.fields.is_paid_options.unpaid'),
+                    ])
+                    ->searchable(),
+                Tables\Filters\SelectFilter::make('product_id')
+                    ->label(__('models.transactions.fields.product'))
+                    ->options(auth()->user()->products()->pluck('name', 'id'))
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
+                Tables\Filters\SelectFilter::make('customer_id')
+                    ->label(__('models.transactions.fields.customer'))
+                    ->options(auth()->user()->customers()->pluck('name', 'id'))
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
+                Tables\Filters\SelectFilter::make('customer_type')
+                    ->label(__('models.customers.fields.type') . ' ' . __('models.transactions.fields.customer'))
+                    ->options(CustomerTypeEnum::class)
+                    ->searchable()
+                    ->modifyQueryUsing(function ($query, $data) {
+                        if (! empty($data['value'])) {
+                            $query->whereHas('customer', function ($query) use ($data) {
+                                $query->where('type', $data);
+                            });
+                        }
+                    }),
+                Tables\Filters\Filter::make('purchase_date')
+                    ->form([
+                        Forms\Components\DatePicker::make('created_from')
+                            ->label(__('models.common.created_from'))
+                            ->native(false)
+                            ->displayFormat('d/m/Y')
+                            ->prefixIcon('heroicon-m-calendar-days'),
+                        Forms\Components\DatePicker::make('created_until')
+                            ->label(__('models.common.created_until'))
+                            ->native(false)
+                            ->displayFormat('d/m/Y')
+                            ->prefixIcon('heroicon-m-calendar-days'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'] ?? null,
+                                fn(Builder $query, $date): Builder => $query->whereDate('purchase_date', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'] ?? null,
+                                fn(Builder $query, $date): Builder => $query->whereDate('purchase_date', '<=', $date),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['created_from'] ?? null) {
+                            $indicators['created_from'] = __('models.common.created_from') . ' ' . Carbon::parse($data['created_from'])->toFormattedDateString();
+                        }
+                        if ($data['created_until'] ?? null) {
+                            $indicators['created_until'] = __('models.common.created_until') . ' ' . Carbon::parse($data['created_until'])->toFormattedDateString();
+                        }
+
+                        return $indicators;
+                    }),
+            ], layout: FiltersLayout::Modal)
+            ->filtersFormColumns(2)
+            ->filtersFormSchema(fn(array $filters): array=> [
+                $filters['is_paid'],
+                $filters['product_id'],
+                $filters['customer_id'],
+                $filters['customer_type'],
+                Forms\Components\Section::make('Tanggal Pembelian')
+                    ->schema([
+                        $filters['purchase_date'],
+                    ]),
             ])
+            ->deferFilters()
+            ->persistFiltersInSession()
+            ->filtersTriggerAction(
+                fn (Tables\Actions\Action $action) => $action
+                    ->button()
+                    ->label('Filter'),
+            )
             ->actions([
                 Tables\Actions\DeleteAction::make()
                     ->button()
