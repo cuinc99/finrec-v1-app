@@ -2,18 +2,19 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\CustomerTypeEnum;
-use App\Filament\Resources\TransactionResource\Pages;
-use App\Models\Transaction;
 use Carbon\Carbon;
 use Filament\Forms;
+use Filament\Tables;
+use Filament\Tables\Table;
+use App\Models\Transaction;
+use App\Enums\CustomerTypeEnum;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\ActionSize;
-use Filament\Tables;
 use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\TransactionResource\Pages;
+use App\Filament\Resources\TransactionResource\Widgets\TransactionStats;
 
 class TransactionResource extends Resource
 {
@@ -111,13 +112,6 @@ class TransactionResource extends Resource
                     ]),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('is_paid')
-                    ->label(__('models.transactions.fields.is_paid'))
-                    ->options([
-                        true => __('models.transactions.fields.is_paid_options.paid'),
-                        false => __('models.transactions.fields.is_paid_options.unpaid'),
-                    ])
-                    ->searchable(),
                 Tables\Filters\SelectFilter::make('product_id')
                     ->label(__('models.transactions.fields.product'))
                     ->options(auth()->user()->products()->pluck('name', 'id'))
@@ -177,9 +171,7 @@ class TransactionResource extends Resource
                         return $indicators;
                     }),
             ], layout: FiltersLayout::Modal)
-            ->filtersFormColumns(2)
             ->filtersFormSchema(fn(array $filters): array=> [
-                $filters['is_paid'],
                 $filters['product_id'],
                 $filters['customer_id'],
                 $filters['customer_type'],
@@ -212,6 +204,13 @@ class TransactionResource extends Resource
     {
         return [
             //
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            TransactionStats::class,
         ];
     }
 

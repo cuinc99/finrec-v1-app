@@ -46,7 +46,7 @@ return [
             'subtotal' => 'Subtotal',
             'subtotal_after_discount' => 'Subtotal Setelah Diskon',
             'capital_per_item' => 'Modal per Item',
-            'capital' => 'Modal',
+            'capital' => 'Modal (Rp)',
             'profit_per_item' => 'Profit per Item',
             'profit' => 'Profit',
             'is_paid' => 'Status',
@@ -77,5 +77,6 @@ return [
         'money_locale' => 'idr',
         'created_from' => 'Dari tanggal',
         'created_until' => 'Sampai tanggal',
+        'today' => 'Hari ini',
     ],
 ];

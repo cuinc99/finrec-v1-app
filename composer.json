@@ -9,6 +9,7 @@
         "php": "^8.3",
         "awcodes/filament-table-repeater": "^3.1",
         "filament/filament": "^3.2",
+        "flowframe/laravel-trend": "^0.3.0",
         "laravel/framework": "^11.31",
         "laravel/tinker": "^2.9",
         "shuvroroy/filament-spatie-laravel-backup": "^2.2"
