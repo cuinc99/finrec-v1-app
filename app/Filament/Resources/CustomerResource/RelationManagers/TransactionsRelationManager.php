@@ -2,13 +2,14 @@
 
 namespace App\Filament\Resources\CustomerResource\RelationManagers;
 
-use Filament\Forms;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Models\Transaction;
+use Filament\Support\Colors\Color;
+use Filament\Support\Enums\ActionSize;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\TransactionResource;
 use Filament\Resources\RelationManagers\RelationManager;
 
 class TransactionsRelationManager extends RelationManager
@@ -17,35 +18,23 @@ class TransactionsRelationManager extends RelationManager
 
     public function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('purchase_date')
-                    ->required()
-                    ->maxLength(255),
-            ]);
+        return TransactionResource::form($form);
     }
 
     public function table(Table $table): Table
     {
-        return $table
-            ->recordTitleAttribute('purchase_date')
-            ->columns([
-                Tables\Columns\TextColumn::make('purchase_date'),
-            ])
-            ->filters([
-                //
-            ])
-            ->headerActions([
-                Tables\Actions\CreateAction::make(),
-            ])
+        return TransactionResource::table($table)
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Actions\Action::make('paid')
+                    ->label('Set ' . __('models.transactions.fields.is_paid_options.paid'))
+                    ->requiresConfirmation()
+                    ->visible(fn(Transaction $record) => !$record->is_paid)
+                    ->action(fn(Transaction $record) => $record->update(['is_paid' => true]))
+                    ->button()
+                    ->icon('heroicon-m-check')
+                    ->color(Color::Sky)
+                    ->size(ActionSize::Small)
+                    ->tooltip(__('models.common.set') . ' ' . __('models.transactions.fields.is_paid_options.paid')),
             ]);
     }
 

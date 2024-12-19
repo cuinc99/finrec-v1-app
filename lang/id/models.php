@@ -101,5 +101,6 @@ return [
         'sold' => 'Terjual',
         'reset_action_heading' => 'Yakin reset item?',
         'reset_action_description' => 'Semua item yang ada akan direset',
+        'set' => 'Tandai sebagai',
     ],
 ];

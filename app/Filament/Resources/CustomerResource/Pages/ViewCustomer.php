@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\CustomerResource\Pages;
 
 use Filament\Actions;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Resources\CustomerResource;
@@ -30,5 +31,10 @@ class ViewCustomer extends ViewRecord
     public static function getNavigationIcon(): string | Htmlable | null
     {
         return 'heroicon-o-shopping-cart';
+    }
+
+    public function getMaxContentWidth(): MaxWidth
+    {
+        return MaxWidth::Full;
     }
 }

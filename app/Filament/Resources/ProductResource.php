@@ -21,6 +21,8 @@ class ProductResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-m-gift';
 
+    protected static ?string $recordTitleAttribute = 'name';
+
     public static function form(Form $form): Form
     {
         return $form

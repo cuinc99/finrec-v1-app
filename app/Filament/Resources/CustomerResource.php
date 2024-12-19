@@ -27,6 +27,8 @@ class CustomerResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-m-users';
 
+    protected static ?string $recordTitleAttribute = 'name';
+
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
     public static function form(Form $form): Form
