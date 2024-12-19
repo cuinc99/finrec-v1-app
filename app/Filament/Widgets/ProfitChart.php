@@ -13,7 +13,7 @@ class ProfitChart extends ChartWidget
 {
     protected static ?string $pollingInterval = null;
 
-    protected static ?string $maxHeight = '200px';
+    protected static ?string $maxHeight = '233px';
 
     protected static ?int $sort = 1;
 
