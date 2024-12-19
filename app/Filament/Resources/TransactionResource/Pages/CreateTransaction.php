@@ -54,7 +54,7 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
                             ->required(),
                         Forms\Components\Select::make('customer_id')
                             ->label(__('models.customers.title'))
-                            ->options(Customer::where('user_id', auth()->id())->pluck('name', 'id'))
+                            ->options(Customer::pluck('name', 'id'))
                             ->prefixIcon('heroicon-m-user-circle')
                             ->searchable()
                             ->required(),
@@ -116,7 +116,7 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
                 // product select
                 Forms\Components\Select::make('product_id')
                     ->label(__('models.transactions.fields.product'))
-                    ->options(Product::where('user_id', auth()->id())->pluck('name', 'id'))
+                    ->options(Product::pluck('name', 'id'))
                     ->searchable()
                     ->preload()
                     ->live(debounce: 1000)

@@ -62,6 +62,20 @@ return [
             ]
         ],
     ],
+    'widgets' => [
+        'transactions_per_month_chart' => [
+            'heading' => 'Transaksi per Bulan',
+            'datasets_label' => 'Transaksi',
+        ],
+        'product_sold_per_month_chart' => [
+            'heading' => 'Produk Terjual per Bulan',
+            'datasets_label' => 'Produk',
+        ],
+        'profit_per_month_chart' => [
+            'heading' => 'Profit per Bulan',
+            'datasets_label' => 'Profit',
+        ],
+    ],
     'common' => [
         'created_at' => 'Dibuat Pada',
         'updated_at' => 'Diperbarui Pada',

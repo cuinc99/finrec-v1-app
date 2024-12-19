@@ -14,6 +14,8 @@ class StatsOverviewWidget extends BaseWidget
 {
     use InteractsWithPageFilters;
 
+    protected static ?string $pollingInterval = null;
+
     protected static ?int $sort = 0;
 
     protected function getStats(): array

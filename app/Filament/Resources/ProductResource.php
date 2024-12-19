@@ -124,9 +124,7 @@ class ProductResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return static::getModel()::query()
-            ->where('user_id', auth()->user()->id)
-            ->latest();
+        return static::getModel()::query()->latest();
     }
 
     public static function getLabel(): string

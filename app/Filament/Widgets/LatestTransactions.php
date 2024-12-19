@@ -14,7 +14,9 @@ class LatestTransactions extends BaseWidget
 {
     protected int | string | array $columnSpan = 'full';
 
-    protected static ?int $sort = 2;
+    protected static ?string $pollingInterval = null;
+
+    protected static ?int $sort = 5;
 
     public function table(Table $table): Table
     {
@@ -47,34 +49,43 @@ class LatestTransactions extends BaseWidget
                     ->sortable(),
                 Tables\Columns\TextColumn::make('price')
                     ->label(__('models.transactions.fields.price'))
-                    ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.'))),
+                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.'))),
                 Tables\Columns\TextColumn::make('quantity')
                     ->label(__('models.transactions.fields.quantity'))
                     ->alignCenter(),
+                Tables\Columns\TextColumn::make('discount_per_item')
+                    ->label(__('models.transactions.fields.discount_per_item'))
+                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.'))),
+                Tables\Columns\TextColumn::make('total_discount_per_item')
+                    ->label(__('models.transactions.fields.total_discount_per_item'))
+                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.'))),
                 Tables\Columns\TextColumn::make('discount')
                     ->label(__('models.transactions.fields.discount'))
-                    ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.'))),
+                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.'))),
+                Tables\Columns\TextColumn::make('total_discount')
+                    ->label(__('models.transactions.fields.total_discount'))
+                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.'))),
                 Tables\Columns\TextColumn::make('subtotal')
                     ->label(__('models.transactions.fields.subtotal'))
                     ->searchable()
                     ->sortable()
-                    ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.'))),
+                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.'))),
                 Tables\Columns\TextColumn::make('subtotal_after_discount')
                     ->label(__('models.transactions.fields.subtotal_after_discount'))
                     ->searchable()
                     ->sortable()
-                    ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
+                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                     ->weight('bold')
                     ->color(Color::Blue),
                 Tables\Columns\TextColumn::make('capital')
                     ->label(__('models.transactions.fields.capital'))
                     ->searchable()
                     ->sortable()
-                    ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
+                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                     ->color(Color::Red),
                 Tables\Columns\TextColumn::make('profit')
                     ->label(__('models.transactions.fields.profit'))
-                    ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
+                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                     ->searchable()
                     ->sortable()
                     ->color(Color::Teal),

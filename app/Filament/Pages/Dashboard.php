@@ -20,19 +20,22 @@ class Dashboard extends BaseDashboard
                     ->schema([
                         Forms\Components\Select::make('is_paid')
                             ->label(__('models.transactions.fields.is_paid_question'))
-                            ->boolean(),
+                            ->boolean()
+                            ->prefixIcon('heroicon-m-sparkles'),
                         Forms\Components\Select::make('product_id')
                             ->label(__('models.transactions.fields.product'))
                             ->options(auth()->user()->products()->pluck('name', 'id'))
                             ->multiple()
                             ->searchable()
-                            ->preload(),
+                            ->preload()
+                            ->prefixIcon('heroicon-m-gift'),
                         Forms\Components\Select::make('customer_id')
                             ->label(__('models.transactions.fields.customer'))
                             ->options(auth()->user()->customers()->pluck('name', 'id'))
                             ->multiple()
                             ->searchable()
-                            ->preload(),
+                            ->preload()
+                            ->prefixIcon('heroicon-m-users'),
                         Forms\Components\DatePicker::make('created_from')
                             ->label(__('models.common.created_from'))
                             ->maxDate(fn(Get $get) => $get('created_until') ?: now())
@@ -51,8 +54,8 @@ class Dashboard extends BaseDashboard
             ]);
     }
 
-    // public function getMaxContentWidth(): MaxWidth
-    // {
-    //     return MaxWidth::Full;
-    // }
+    public function getMaxContentWidth(): MaxWidth
+    {
+        return MaxWidth::Full;
+    }
 }

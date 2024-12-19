@@ -248,9 +248,7 @@ class TransactionResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return static::getModel()::query()
-            ->where('user_id', auth()->user()->id)
-            ->latest('purchase_date');
+        return static::getModel()::query()->latest('purchase_date');
     }
 
     public static function getLabel(): string
