@@ -148,6 +148,7 @@ class TransactionResource extends Resource
                     ->default(1)
                     ->live(debounce: 1000)
                     ->integer()
+                    ->suffix('Item')
                     ->afterStateUpdated(function (Set $set, Get $get, ?int $state) {
                         $product = Product::find($get('product_id'));
                         $quantity = $state;
@@ -179,6 +180,7 @@ class TransactionResource extends Resource
                     ->minValue(0)
                     ->default(0)
                     ->integer()
+                    ->prefix('Rp')
                     ->afterStateUpdated(function (Set $set, Get $get, ?int $state) {
                         $product = Product::find($get('product_id'));
                         $quantity = $get('quantity');
@@ -205,6 +207,7 @@ class TransactionResource extends Resource
                     ->minValue(0)
                     ->default(0)
                     ->integer()
+                    ->prefix('Rp')
                     ->afterStateUpdated(function (Set $set, Get $get, ?int $state) {
                         $product = Product::find($get('product_id'));
                         $quantity = $get('quantity');
