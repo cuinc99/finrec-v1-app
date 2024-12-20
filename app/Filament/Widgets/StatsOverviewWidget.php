@@ -42,7 +42,7 @@ class StatsOverviewWidget extends BaseWidget
                 fn(Builder $query, $date): Builder => $query->whereDate('purchase_date', '<=', $date),
             );
 
-        $transactionData = Trend::model(Transaction::class)
+        $transactionCount = Trend::model(Transaction::class)
             ->dateColumn('purchase_date')
             ->between(
                 start: now()->subYear(),
@@ -51,21 +51,36 @@ class StatsOverviewWidget extends BaseWidget
             ->perMonth()
             ->count();
 
+        $transactionQuantity = Trend::model(Transaction::class)
+            ->dateColumn('purchase_date')
+            ->between(
+                start: now()->subYear(),
+                end: now(),
+            )
+            ->perMonth()
+            ->sum('quantity');
+
         return [
             Stat::make(
                 label: __('models.transactions.title'),
-                value:number_format($transactions->count()))
+                value: number_format($transactions->count()))
                 ->chart(
-                    $transactionData
+                    $transactionCount
                         ->map(fn(TrendValue $value) => $value->aggregate)
                         ->toArray()
                 )
                 ->color('success'),
             Stat::make(
-                label: __('models.products.title') . ' ' . __('models.common.sold'),
-                value: number_format($transactions->sum('quantity'))),
+                label: __('models.common.sold'),
+                value: number_format($transactions->sum('quantity')))
+                ->chart(
+                    $transactionQuantity
+                        ->map(fn(TrendValue $value) => $value->aggregate)
+                        ->toArray()
+                )
+                ->color('info'),
             Stat::make(
-                label: __('models.transactions.fields.subtotal_after_discount'),
+                label: __('models.transactions.fields.total_sales'),
                 value: __("Rp. " . number_format($transactions->sum('subtotal_after_discount'), 0, ',', '.'))),
             Stat::make(
                 label: __('models.transactions.fields.profit'),

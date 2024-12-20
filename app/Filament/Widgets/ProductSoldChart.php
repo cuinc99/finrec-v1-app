@@ -15,7 +15,7 @@ class ProductSoldChart extends ChartWidget
 
     protected static ?string $maxHeight = '233px';
 
-    protected static ?int $sort = 3;
+    protected static ?int $sort = 1;
 
     protected static string $color = 'warning';
 

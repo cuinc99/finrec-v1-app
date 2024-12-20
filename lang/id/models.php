@@ -56,6 +56,8 @@ return [
             'is_paid_question' => 'Pembayaran Lunas?',
             'product' => 'Produk',
             'customer' => 'Pelanggan',
+            'total_sales' => 'Penjualan',
+            'total_transactions' => 'Transaksi',
             'is_paid_options' => [
                 'paid' => 'Lunas',
                 'unpaid' => 'Belum Lunas',
@@ -64,15 +66,17 @@ return [
     ],
     'widgets' => [
         'transactions_per_month_chart' => [
-            'heading' => 'Transaksi per Bulan',
+            'heading' => 'Grafik Transaksi per Bulan',
             'datasets_label' => 'Transaksi',
         ],
         'product_sold_per_month_chart' => [
-            'heading' => 'Produk Terjual per Bulan',
+            'heading' => 'Grafik Produk Terjual per Bulan',
+            'heading_table' => 'Produk Terjual per Bulan',
             'datasets_label' => 'Produk',
         ],
         'profit_per_month_chart' => [
-            'heading' => 'Profit per Bulan',
+            'heading' => 'Grafik Profit per Bulan',
+            'heading_table' => 'Profit per Bulan',
             'datasets_label' => 'Profit',
         ],
     ],
@@ -99,6 +103,8 @@ return [
         'latest' => 'Terbaru',
         'total' => 'Total',
         'sold' => 'Terjual',
+        'month' => 'Bulan',
+        'year' => 'Tahun',
         'reset_action_heading' => 'Yakin reset item?',
         'reset_action_description' => 'Semua item yang ada akan direset',
         'set' => 'Tandai sebagai',

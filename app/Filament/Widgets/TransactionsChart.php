@@ -20,6 +20,11 @@ class TransactionsChart extends ChartWidget
 
     public ?string $filter = null;
 
+    public static function canView(): bool
+    {
+        return false;
+    }
+
     protected function getFilters(): ?array
     {
         $currentYear = now()->year;
