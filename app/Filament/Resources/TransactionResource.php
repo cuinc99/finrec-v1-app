@@ -21,7 +21,6 @@ use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\ActionSize;
 use Filament\Tables;
-use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -51,6 +50,20 @@ class TransactionResource extends Resource
                             ->required(),
                         Forms\Components\Select::make('customer_id')
                             ->label(__('models.customers.title'))
+                            ->relationship(name: 'customer', titleAttribute: 'name')
+                            ->createOptionForm([
+                                Forms\Components\TextInput::make('name')
+                                    ->label(__('models.customers.fields.name'))
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\ToggleButtons::make('type')
+                                    ->label(__('models.customers.fields.type'))
+                                    ->required()
+                                    ->inline()
+                                    ->options(CustomerTypeEnum::class),
+                                Forms\Components\Hidden::make('user_id')
+                                    ->default(auth()->user()->id),
+                            ])
                             ->options(Customer::pluck('name', 'id'))
                             ->prefixIcon('heroicon-m-user-circle')
                             ->searchable()
@@ -85,7 +98,7 @@ class TransactionResource extends Resource
                     ->label(__('models.transactions.fields.price')),
                 Header::make('quantity')
                     ->label(__('models.transactions.fields.quantity'))
-                    ->width('100px')
+                    ->width('150px')
                     ->markAsRequired(),
                 Header::make('subtotal')
                     ->label(__('models.transactions.fields.subtotal')),
