@@ -56,7 +56,7 @@ class ProfitChart extends ChartWidget
                     'tension' => 0.3,
                 ],
             ],
-            'labels' => $data->map(fn (TrendValue $value) => $value->date),
+            'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         ];
     }
 

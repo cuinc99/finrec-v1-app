@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use Carbon\Carbon;
 use Filament\Tables;
 use Filament\Tables\Table;
 use App\Models\Transaction;
@@ -12,16 +13,26 @@ use Filament\Widgets\TableWidget as BaseWidget;
 
 class ProfitTable extends BaseWidget
 {
-    protected int | string | array $columnSpan = 'full';
+    protected int | string | array $columnSpan = 'md';
 
     protected static ?string $pollingInterval = null;
 
     protected static ?int $sort = 5;
 
+    protected $year;
+
+    public function mount()
+    {
+        $this->year = self::getCurrentYear();
+    }
+
+    public static function getCurrentYear(): int
+    {
+        return Carbon::now()->year;
+    }
+
     public function table(Table $table): Table
     {
-        $currentYear = date('Y');
-
         return $table
             ->query(
                 Transaction::query()
@@ -37,18 +48,19 @@ class ProfitTable extends BaseWidget
                     ->orderBy('year', 'asc')
                     ->orderBy('month', 'asc')
             )
+            ->defaultPaginationPageOption(25)
             ->columns([
                 Tables\Columns\TextColumn::make('month')
                     ->label(__('models.common.month'))
                     ->formatStateUsing(fn ($state) => date('F', mktime(0, 0, 0, $state, 1))),
                 Tables\Columns\TextColumn::make('year')
-                    ->label(__('models.common.year')),
+                    ->label(__('models.common.year'))
+                    ->alignCenter(),
                 Tables\Columns\TextColumn::make('total_transactions')
                     ->label(__('models.transactions.fields.total_transactions'))
                     ->alignCenter(),
                 Tables\Columns\TextColumn::make('total_products')
                     ->label(__('models.products.fields.sold'))
-                    ->suffix(' item')
                     ->alignCenter(),
                 Tables\Columns\TextColumn::make('total_sales')
                     ->label(__('models.transactions.fields.total_sales'))
@@ -62,19 +74,34 @@ class ProfitTable extends BaseWidget
             ->filters([
                 Tables\Filters\SelectFilter::make('year')
                     ->label(__('models.common.year'))
-                    ->options(
-                        Transaction::query()
-                            ->selectRaw('YEAR(purchase_date) as year')
-                            ->distinct()
-                            ->pluck('year', 'year')
-                            ->toArray()
-                    )
-                    ->default($currentYear)
+                    ->options($this->getAvailableYears())
+                    ->default($this->year)
                     ->query(function ($query, $data) {
                         return $data['value'] ? $query->whereYear('purchase_date', $data['value']) : $query;
                     })
                     ->selectablePlaceholder(false)
-            ]);
+            ])
+            ->filtersTriggerAction(
+                fn(Tables\Actions\Action $action) => $action
+                    ->button()
+                    ->label('Filter'),
+            );
+    }
+
+    protected function getAvailableYears()
+    {
+        $years = DB::table('transactions')
+            ->select(DB::raw('DISTINCT YEAR(purchase_date) as year'))
+            ->whereNotNull('purchase_date')
+            ->orderBy('year', 'desc')
+            ->pluck('year', 'year')
+            ->toArray();
+
+        if (empty($years)) {
+            $years = [self::getCurrentYear() => self::getCurrentYear()];
+        }
+
+        return $years;
     }
 
     public function getTableRecordKey($record): string

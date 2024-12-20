@@ -24,28 +24,70 @@ class TransactionStats extends BaseWidget
 
     protected function getStats(): array
     {
-        $transactionData = Trend::model(Transaction::class)
+        $transactionQuantity = Trend::model(Transaction::class)
             ->dateColumn('purchase_date')
             ->between(
                 start: now()->subYear(),
                 end: now(),
             )
             ->perMonth()
-            ->count();
+            ->sum('quantity');
+
+        $transactionTotalSales = Trend::model(Transaction::class)
+            ->dateColumn('purchase_date')
+            ->between(
+                start: now()->subYear(),
+                end: now(),
+            )
+            ->perMonth()
+            ->sum('subtotal_after_discount');
+
+        $transactionProfit = Trend::model(Transaction::class)
+            ->dateColumn('purchase_date')
+            ->between(
+                start: now()->subYear(),
+                end: now(),
+            )
+            ->perMonth()
+            ->sum('profit');
 
         return [
-            Stat::make(__('models.transactions.title'), number_format($this->getPageTableQuery()->count()))
+            Stat::make(
+                label: __('models.transactions.title'),
+                value: number_format((clone $this->getPageTableQuery())->count())),
+            Stat::make(
+                label: __('models.common.sold'),
+                value: number_format((clone $this->getPageTableQuery())->sum('quantity')))
                 ->chart(
-                    $transactionData
+                    $transactionQuantity
                         ->map(fn(TrendValue $value) => $value->aggregate)
                         ->toArray()
                 )
-                ->description(Transaction::where('purchase_date', today())->count() . ' ' . __('models.common.today'))
-                ->descriptionIcon('heroicon-m-arrow-trending-up', IconPosition::Before)
+                ->color('warning'),
+            Stat::make(
+                label: __('models.transactions.fields.is_paid_options.paid'),
+                value: __("Rp. " . number_format((clone $this->getPageTableQuery())->where('is_paid', true)->sum('subtotal_after_discount'), 0, ',', '.'))),
+            Stat::make(
+                label: __('models.transactions.fields.is_paid_options.unpaid'),
+                value: __("Rp. " . number_format((clone $this->getPageTableQuery())->where('is_paid', false)->sum('subtotal_after_discount'), 0, ',', '.'))),
+            Stat::make(
+                label: __('models.transactions.fields.total_sales'),
+                value: __("Rp. " . number_format((clone $this->getPageTableQuery())->sum('subtotal_after_discount'), 0, ',', '.')))
+                ->chart(
+                    $transactionTotalSales
+                        ->map(fn(TrendValue $value) => $value->aggregate)
+                        ->toArray()
+                )
+                ->color('info'),
+            Stat::make(
+                label: __('models.transactions.fields.profit'),
+                value: __("Rp. " . number_format((clone $this->getPageTableQuery())->sum('profit'), 0, ',', '.')))
+                ->chart(
+                    $transactionProfit
+                        ->map(fn(TrendValue $value) => $value->aggregate)
+                        ->toArray()
+                )
                 ->color('success'),
-            Stat::make(__('models.transactions.fields.is_paid_options.paid'), __("Rp. " . number_format($this->getPageTableQuery()->where('is_paid', true)->sum('subtotal_after_discount'), 0, ',', '.'))),
-            Stat::make(__('models.transactions.fields.is_paid_options.unpaid'), __("Rp. " . number_format($this->getPageTableQuery()->where('is_paid', false)->sum('subtotal_after_discount'), 0, ',', '.'))),
-            Stat::make(__('models.transactions.fields.profit'), __("Rp. " . number_format($this->getPageTableQuery()->sum('profit'), 0, ',', '.'))),
         ];
     }
 }

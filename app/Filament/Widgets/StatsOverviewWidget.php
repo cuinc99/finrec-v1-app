@@ -18,6 +18,11 @@ class StatsOverviewWidget extends BaseWidget
 
     protected static ?int $sort = 0;
 
+    // protected function getColumns(): int
+    // {
+    //     return 12;
+    // }
+
     protected function getStats(): array
     {
         $transactions = Transaction::query()
@@ -42,15 +47,6 @@ class StatsOverviewWidget extends BaseWidget
                 fn(Builder $query, $date): Builder => $query->whereDate('purchase_date', '<=', $date),
             );
 
-        $transactionCount = Trend::model(Transaction::class)
-            ->dateColumn('purchase_date')
-            ->between(
-                start: now()->subYear(),
-                end: now(),
-            )
-            ->perMonth()
-            ->count();
-
         $transactionQuantity = Trend::model(Transaction::class)
             ->dateColumn('purchase_date')
             ->between(
@@ -60,31 +56,61 @@ class StatsOverviewWidget extends BaseWidget
             ->perMonth()
             ->sum('quantity');
 
+        $transactionTotalSales = Trend::model(Transaction::class)
+            ->dateColumn('purchase_date')
+            ->between(
+                start: now()->subYear(),
+                end: now(),
+            )
+            ->perMonth()
+            ->sum('subtotal_after_discount');
+
+        $transactionProfit = Trend::model(Transaction::class)
+            ->dateColumn('purchase_date')
+            ->between(
+                start: now()->subYear(),
+                end: now(),
+            )
+            ->perMonth()
+            ->sum('profit');
+
         return [
             Stat::make(
                 label: __('models.transactions.title'),
-                value: number_format($transactions->count()))
-                ->chart(
-                    $transactionCount
-                        ->map(fn(TrendValue $value) => $value->aggregate)
-                        ->toArray()
-                )
-                ->color('success'),
+                value: number_format((clone $transactions)->count())),
             Stat::make(
                 label: __('models.common.sold'),
-                value: number_format($transactions->sum('quantity')))
+                value: number_format((clone $transactions)->sum('quantity')))
                 ->chart(
                     $transactionQuantity
                         ->map(fn(TrendValue $value) => $value->aggregate)
                         ->toArray()
                 )
-                ->color('info'),
+                ->color('warning'),
+            Stat::make(
+                label: __('models.transactions.fields.is_paid_options.paid'),
+                value: __("Rp. " . number_format((clone $transactions)->where('is_paid', true)->sum('subtotal_after_discount'), 0, ',', '.'))),
+            Stat::make(
+                label: __('models.transactions.fields.is_paid_options.unpaid'),
+                value: __("Rp. " . number_format((clone $transactions)->where('is_paid', false)->sum('subtotal_after_discount'), 0, ',', '.'))),
             Stat::make(
                 label: __('models.transactions.fields.total_sales'),
-                value: __("Rp. " . number_format($transactions->sum('subtotal_after_discount'), 0, ',', '.'))),
+                value: __("Rp. " . number_format((clone $transactions)->sum('subtotal_after_discount'), 0, ',', '.')))
+                ->chart(
+                    $transactionTotalSales
+                        ->map(fn(TrendValue $value) => $value->aggregate)
+                        ->toArray()
+                )
+                ->color('info'),
             Stat::make(
                 label: __('models.transactions.fields.profit'),
-                value: __("Rp. " . number_format($transactions->sum('profit'), 0, ',', '.'))),
+                value: __("Rp. " . number_format((clone $transactions)->sum('profit'), 0, ',', '.')))
+                ->chart(
+                    $transactionProfit
+                        ->map(fn(TrendValue $value) => $value->aggregate)
+                        ->toArray()
+                )
+                ->color('success'),
         ];
     }
 }

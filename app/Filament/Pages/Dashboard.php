@@ -12,6 +12,11 @@ class Dashboard extends BaseDashboard
 {
     use BaseDashboard\Concerns\HasFiltersForm;
 
+    // public function getColumns(): int | string | array
+    // {
+    //     return 3;
+    // }
+
     public function filtersForm(Form $form): Form
     {
         return $form
