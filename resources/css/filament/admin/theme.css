@@ -6,3 +6,40 @@
 .table-repeater-header-column {
     background-color: transparent;
 }
+
+.bg-transaction {
+    background-color: #e2711d !important;
+}
+
+.bg-sold {
+    background-color: #ff9505 !important;
+}
+
+.bg-paid {
+    background-color: #0077b6 !important;
+}
+
+.bg-unpaid {
+    background-color: #d81159 !important;
+}
+
+.bg-sales {
+    background-color: #023e8a !important;
+}
+
+.bg-profit {
+    background-color: #00a896 !important;
+}
+
+
+.fi-wi-stats-overview-stat-label {
+    color: #FFFFFF !important;
+}
+
+.fi-wi-stats-overview-stat-icon {
+    color: #FFFFFF !important;
+}
+
+.fi-wi-stats-overview-stat-value {
+    color: #FFFFFF !important;
+}
