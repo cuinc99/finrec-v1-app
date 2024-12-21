@@ -24,6 +24,9 @@ use Filament\Tables;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use pxlrbt\FilamentExcel\Columns\Column;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
 class TransactionResource extends Resource
 {
@@ -323,6 +326,31 @@ class TransactionResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->headerActions([
+                ExportAction::make()->exports([
+                    ExcelExport::make('table')
+                        ->withFilename(date('Y-m-d') . ' - export_' . __('models.transactions.title'))
+                        ->withWriterType(\Maatwebsite\Excel\Excel::XLSX)
+                        ->fromTable()
+                        ->withColumns([
+                            Column::make('purchase_date')->heading(__('models.transactions.fields.purchase_date')),
+                            Column::make('customer.name')->heading(__('models.customers.fields.name')),
+                            Column::make('product.name')->heading(__('models.products.fields.name')),
+                            Column::make('price')->heading(__('models.transactions.fields.price')),
+                            Column::make('quantity')->heading(__('models.transactions.fields.quantity')),
+                            Column::make('discount_per_item')->heading(__('models.transactions.fields.discount_per_item')),
+                            Column::make('total_discount_per_item')->heading(__('models.transactions.fields.total_discount_per_item')),
+                            Column::make('discount')->heading(__('models.transactions.fields.discount')),
+                            Column::make('total_discount')->heading(__('models.transactions.fields.total_discount')),
+                            Column::make('subtotal')->heading(__('models.transactions.fields.subtotal')),
+                            Column::make('subtotal_after_discount')->heading(__('models.transactions.fields.subtotal_after_discount')),
+                            Column::make('capital')->heading(__('models.transactions.fields.capital')),
+                            Column::make('profit')->heading(__('models.transactions.fields.profit')),
+                            Column::make('is_paid')->heading(__('models.transactions.fields.is_paid'))
+                                ->formatStateUsing(fn($state) => $state ? __('models.transactions.fields.is_paid_options.paid') : __('models.transactions.fields.is_paid_options.unpaid')),
+                        ]),
+                ])->label('Export XLS'),
+            ])
             ->columns([
                 Tables\Columns\TextColumn::make('is_paid')
                     ->label(__('models.transactions.fields.is_paid'))

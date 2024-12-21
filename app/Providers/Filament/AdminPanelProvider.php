@@ -69,6 +69,7 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarCollapsibleOnDesktop()
             ->defaultThemeMode(ThemeMode::Light)
             ->unsavedChangesAlerts()
+            // ->databaseNotifications()
             ->plugins([
                 FilamentSpatieLaravelBackupPlugin::make()
                     ->usingPage(Backups::class),
