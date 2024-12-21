@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\Support\Htmlable;
 use Filament\Widgets\TableWidget as BaseWidget;
 
-class ProfitTable extends BaseWidget
+class SalesAndExpensesTable extends BaseWidget
 {
     protected int | string | array $columnSpan = 'md';
 
@@ -42,7 +42,7 @@ class ProfitTable extends BaseWidget
                         DB::raw('COUNT(*) as total_transactions'),
                         DB::raw('SUM(quantity) as total_products'),
                         DB::raw('SUM(subtotal_after_discount) as total_sales'),
-                        DB::raw('SUM(profit) as total_profit'),
+                        // DB::raw('SUM(profit) as total_profit'),
                     ])
                     ->groupBy('year', 'month')
                     ->orderBy('year', 'asc')
@@ -66,10 +66,10 @@ class ProfitTable extends BaseWidget
                     ->label(__('models.transactions.fields.total_sales'))
                     ->formatStateUsing(fn ($state) => "Rp. " . number_format($state, 0, ',', '.'))
                     ->color(Color::Blue),
-                Tables\Columns\TextColumn::make('total_profit')
-                    ->label(__('models.transactions.fields.profit'))
-                    ->formatStateUsing(fn ($state) => "Rp. " . number_format($state, 0, ',', '.'))
-                    ->color(Color::Teal),
+                // Tables\Columns\TextColumn::make('total_profit')
+                //     ->label(__('models.transactions.fields.profit'))
+                //     ->formatStateUsing(fn ($state) => "Rp. " . number_format($state, 0, ',', '.'))
+                //     ->color(Color::Teal),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('year')
@@ -112,6 +112,6 @@ class ProfitTable extends BaseWidget
 
     protected function getTableHeading(): string | Htmlable | null
     {
-        return __('models.widgets.profit_per_month_chart.heading_table');
+        return __('models.widgets.sales_expenses_per_month_chart.heading_table');
     }
 }

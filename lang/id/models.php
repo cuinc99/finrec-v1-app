@@ -30,8 +30,7 @@ return [
         'fields' => [
             'name' => 'Nama',
             'description' => 'Deskripsi',
-            'purchase_price' => 'Harga Beli',
-            'selling_price' => 'Harga Jual',
+            'selling_price' => 'Harga',
             'sold' => 'Terjual',
         ],
     ],
@@ -42,42 +41,36 @@ return [
             'purchase_date' => 'Tanggal Pembelian',
             'price' => 'Harga',
             'quantity' => 'Qty',
-            'discount_per_item' => 'Diskon per Item',
-            'total_discount_per_item' => 'Total Diskon per Item',
             'discount' => 'Diskon',
-            'total_discount' => 'Total Diskon',
             'subtotal' => 'Subtotal',
             'subtotal_after_discount' => 'Subtotal Setelah Diskon',
-            'capital_per_item' => 'Modal per Item',
-            'capital' => 'Modal',
-            'profit_per_item' => 'Profit per Item',
-            'profit' => 'Profit',
-            'is_paid' => 'Status',
-            'is_paid_question' => 'Pembayaran Lunas?',
             'product' => 'Produk',
             'customer' => 'Pelanggan',
             'total_sales' => 'Penjualan',
             'total_transactions' => 'Transaksi',
-            'is_paid_options' => [
-                'paid' => 'Lunas',
-                'unpaid' => 'Belum Lunas',
-            ]
+        ],
+    ],
+    'expenses' => [
+        'title' => 'Pengeluaran',
+        'fields' => [
+            'expense_code' => 'Kode Pengeluaran',
+            'purchase_date' => 'Tanggal Pembelian',
+            'product' => 'Produk',
+            'price' => 'Harga',
+            'subtotal' => 'Subtotal',
         ],
     ],
     'widgets' => [
-        'transactions_per_month_chart' => [
-            'heading' => 'Grafik Transaksi per Bulan',
-            'datasets_label' => 'Transaksi',
+        'sales_expenses_per_month_chart' => [
+            'heading' => 'Grafik Penjualan & Pengeluaran per Bulan',
+            'heading_table' => 'Penjualan & Pengeluaran per Bulan',
+            'datasets_label_sales' => 'Penjualan',
+            'datasets_label_expenses' => 'Pengeluaran',
         ],
         'product_sold_per_month_chart' => [
             'heading' => 'Grafik Produk Terjual per Bulan',
             'heading_table' => 'Produk Terjual per Bulan',
             'datasets_label' => 'Produk',
-        ],
-        'profit_per_month_chart' => [
-            'heading' => 'Grafik Profit per Bulan',
-            'heading_table' => 'Profit per Bulan',
-            'datasets_label' => 'Profit',
         ],
     ],
     'common' => [

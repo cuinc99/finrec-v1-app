@@ -12,21 +12,12 @@ class Dashboard extends BaseDashboard
 {
     use BaseDashboard\Concerns\HasFiltersForm;
 
-    // public function getColumns(): int | string | array
-    // {
-    //     return 3;
-    // }
-
     public function filtersForm(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\Section::make()
                     ->schema([
-                        Forms\Components\Select::make('is_paid')
-                            ->label(__('models.transactions.fields.is_paid_question'))
-                            ->boolean()
-                            ->prefixIcon('heroicon-m-sparkles'),
                         Forms\Components\Select::make('product_id')
                             ->label(__('models.transactions.fields.product'))
                             ->options(auth()->user()->products()->pluck('name', 'id'))
@@ -55,7 +46,7 @@ class Dashboard extends BaseDashboard
                             ->displayFormat('d/m/Y')
                             ->prefixIcon('heroicon-m-calendar-days'),
                     ])
-                    ->columns(5),
+                    ->columns(4),
             ]);
     }
 

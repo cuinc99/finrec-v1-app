@@ -24,18 +24,7 @@ class TransactionsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return TransactionResource::table($table)
-            ->actions([
-                Tables\Actions\Action::make('paid')
-                    ->label('Set ' . __('models.transactions.fields.is_paid_options.paid'))
-                    ->requiresConfirmation()
-                    ->visible(fn(Transaction $record) => !$record->is_paid)
-                    ->action(fn(Transaction $record) => $record->update(['is_paid' => true]))
-                    ->button()
-                    ->icon('heroicon-m-check')
-                    ->color(Color::Sky)
-                    ->size(ActionSize::Small)
-                    ->tooltip(__('models.common.set') . ' ' . __('models.transactions.fields.is_paid_options.paid')),
-            ]);
+            ->actions([]);
     }
 
     public static function getTitle(Model $ownerRecord, string $pageClass): string

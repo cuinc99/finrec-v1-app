@@ -35,10 +35,6 @@ class ProductResource extends Resource
                             ->required()
                             ->maxLength(255)
                             ->columnSpanFull(),
-                        Forms\Components\TextInput::make('purchase_price')
-                            ->label(__('models.products.fields.purchase_price'))
-                            ->required()
-                            ->numeric(),
                         Forms\Components\TextInput::make('selling_price')
                             ->label(__('models.products.fields.selling_price'))
                             ->required()
@@ -59,17 +55,12 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label(__('models.products.fields.name'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('purchase_price')
-                    ->label(__('models.products.fields.purchase_price'))
-                    ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('selling_price')
                     ->label(__('models.products.fields.selling_price'))
                     ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('sold')
                     ->label(__('models.products.fields.sold'))
-                    ->suffix(' item')
                     ->alignCenter(),
             ])
             ->filters([
@@ -108,15 +99,11 @@ class ProductResource extends Resource
                     ->schema([
                         Infolists\Components\TextEntry::make('name')
                             ->label(__('models.products.fields.name')),
-                        Infolists\Components\TextEntry::make('purchase_price')
-                            ->label(__('models.products.fields.purchase_price'))
-                            ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.'))),
                         Infolists\Components\TextEntry::make('selling_price')
                             ->label(__('models.products.fields.selling_price'))
                             ->formatStateUsing(fn (string $state): string => __("Rp. " . number_format($state, 0, ',', '.'))),
                         Infolists\Components\TextEntry::make('sold')
-                            ->label(__('models.products.fields.sold'))
-                            ->suffix(' item'),
+                            ->label(__('models.products.fields.sold')),
                         Infolists\Components\TextEntry::make('description')
                             ->label(__('models.products.fields.description')),
                     ]),

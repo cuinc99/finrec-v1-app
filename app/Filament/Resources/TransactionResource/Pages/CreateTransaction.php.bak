@@ -91,26 +91,11 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
                     ->markAsRequired(),
                 Header::make('subtotal')
                     ->label(__('models.transactions.fields.subtotal')),
-                Header::make('discount_per_item')
-                    ->label(__('models.transactions.fields.discount_per_item'))
-                    ->width('150px'),
-                Header::make('total_discount_per_item')
-                    ->label(__('models.transactions.fields.total_discount_per_item'))
-                    ->width('150px'),
                 Header::make('discount')
                     ->label(__('models.transactions.fields.discount'))
                     ->width('150px'),
-                Header::make('total_discount')
-                    ->label(__('models.transactions.fields.total_discount'))
-                    ->width('150px'),
                 Header::make('subtotal_after_discount')
                     ->label(__('models.transactions.fields.subtotal_after_discount')),
-                Header::make('capital')
-                    ->label(__('models.transactions.fields.capital')),
-                Header::make('profit')
-                    ->label(__('models.transactions.fields.profit')),
-                Header::make('is_paid_question')
-                    ->label(__('models.transactions.fields.is_paid_question')),
             ])
             ->schema([
                 // product select
@@ -123,10 +108,9 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
                     ->afterStateUpdated(function (Set $set, Get $get, ?int $state) {
                         $product = Product::find($state);
                         $quantity = $get('quantity');
-                        $discountPerItem = $get('discount_per_item');
                         $discount = $get('discount');
 
-                        static::updateData($product, $quantity, $discountPerItem, $discount, $set);
+                        static::updateData($product, $quantity, $discount, $set);
                     })
                     ->required(),
 
@@ -153,10 +137,9 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
                     ->afterStateUpdated(function (Set $set, Get $get, ?int $state) {
                         $product = Product::find($get('product_id'));
                         $quantity = $state;
-                        $discountPerItem = $get('discount_per_item');
                         $discount = $get('discount');
 
-                        static::updateData($product, $quantity, $discountPerItem, $discount, $set);
+                        static::updateData($product, $quantity, $discount, $set);
                     })
                     ->disabled(fn(Get $get) => !$get('product_id'))
                     ->required(),
@@ -174,32 +157,6 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
                 Forms\Components\Hidden::make('subtotal')
                     ->required(),
 
-                // discount_per_item input
-                Forms\Components\TextInput::make('discount_per_item')
-                    ->label(__('models.transactions.fields.discount_per_item'))
-                    ->live(debounce: 1000)
-                    ->minValue(0)
-                    ->default(0)
-                    ->integer()
-                    ->afterStateUpdated(function (Set $set, Get $get, ?int $state) {
-                        $product = Product::find($get('product_id'));
-                        $quantity = $get('quantity');
-                        $discountPerItem = $state;
-                        $discount = $get('discount');
-
-                        static::updateData($product, $quantity, $discountPerItem, $discount, $set);
-                    })
-                    ->disabled(fn(Get $get) => !$get('product_id')),
-
-                // total_discount_per_item display
-                Forms\Components\Placeholder::make("total_discount_per_item_display")
-                    ->label(__('models.transactions.fields.total_discount_per_item'))
-                    ->hiddenLabel()
-                    ->content(function (Get $get) {
-                        $totalDiscountPerItem = $get('total_discount_per_item');
-                        return __("Rp. " . number_format($totalDiscountPerItem, 0, ',', '.'));
-                    }),
-
                 // discount input
                 Forms\Components\TextInput::make('discount')
                     ->label(__('models.transactions.fields.discount'))
@@ -210,21 +167,11 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
                     ->afterStateUpdated(function (Set $set, Get $get, ?int $state) {
                         $product = Product::find($get('product_id'));
                         $quantity = $get('quantity');
-                        $discountPerItem = $get('discount_per_item');
                         $discount = $state;
 
-                        static::updateData($product, $quantity, $discountPerItem, $discount, $set);
+                        static::updateData($product, $quantity, $discount, $set);
                     })
                     ->disabled(fn(Get $get) => !$get('product_id')),
-
-                // total_discount display
-                Forms\Components\Placeholder::make("total_discount_display")
-                    ->label(__('models.transactions.fields.total_discount'))
-                    ->hiddenLabel()
-                    ->content(function (Get $get) {
-                        $totalDiscount = $get('total_discount');
-                        return __("Rp. " . number_format($totalDiscount, 0, ',', '.'));
-                    }),
 
                 // subtotal_after_discount display
                 Forms\Components\Placeholder::make("subtotal_after_discount_display")
@@ -238,48 +185,6 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
                 // subtotal_after_discount hidden
                 Forms\Components\Hidden::make('subtotal_after_discount')
                     ->required(),
-
-                // capital_per_item hidden
-                Forms\Components\Hidden::make('capital_per_item')
-                    ->required(),
-
-                // capital display
-                Forms\Components\Placeholder::make("capital_display")
-                    ->label(__('models.transactions.fields.capital'))
-                    ->hiddenLabel()
-                    ->content(function (Get $get) {
-                        $profitPerItem = $get('capital');
-                        return __("Rp. " . number_format($profitPerItem, 0, ',', '.'));
-                    }),
-
-                // capital hidden
-                Forms\Components\Hidden::make('capital')
-                    ->required(),
-
-                // profit_per_item hidden
-                Forms\Components\Hidden::make('profit_per_item')
-                    ->required(),
-
-                // profit display
-                Forms\Components\Placeholder::make("profit_display")
-                    ->label(__('models.transactions.fields.profit'))
-                    ->hiddenLabel()
-                    ->content(function (Get $get) {
-                        $profit = $get('profit');
-                        return __("Rp. " . number_format($profit, 0, ',', '.'));
-                    }),
-
-                // profit hidden
-                Forms\Components\Hidden::make('profit')
-                    ->required(),
-
-                // is_paid hidden
-                Forms\Components\Toggle::make('is_paid')
-                    ->label(__('models.transactions.fields.is_paid_question'))
-                    ->onIcon('heroicon-m-check')
-                    ->offIcon('heroicon-m-x-mark')
-                    ->onColor(Color::Sky)
-                    ->offColor(Color::Red),
             ]);
     }
 
@@ -287,23 +192,11 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
     {
         $price = $product?->selling_price ?? 0;
         $subtotal = $price * $quantity;
-        $totalDiscountPerItem = $discountPerItem * $quantity;
-        $totalDiscount = $totalDiscountPerItem + $discount;
-        $subtotalAfterDiscount = $subtotal - $totalDiscount;
-        $capitalPerItem = $product?->purchase_price ?? 0;
-        $capital = $product?->purchase_price * $quantity;
-        $profitPerItem = $price - $capitalPerItem;
-        $profit = $subtotalAfterDiscount - $capital;
+        $subtotalAfterDiscount = $subtotal - $discount;
 
         $set('price', $price);
         $set('subtotal', $subtotal);
         $set('subtotal_after_discount', $subtotalAfterDiscount);
-        $set('total_discount_per_item', $totalDiscountPerItem);
-        $set('total_discount', $totalDiscount);
-        $set('capital_per_item', $capitalPerItem);
-        $set('capital', $capital);
-        $set('profit_per_item', $profitPerItem);
-        $set('profit', $profit);
     }
 
     public function save()
@@ -318,17 +211,9 @@ class CreateTransaction extends Page implements Forms\Contracts\HasForms
                     "purchase_date" => $transactions['purchase_date'],
                     "quantity" => $transaction['quantity'],
                     "price" => $transaction['price'],
-                    "discount_per_item" => $transaction['discount_per_item'],
-                    "total_discount_per_item" => $transaction['total_discount_per_item'],
                     "discount" => $transaction['discount'],
-                    "total_discount" => $transaction['total_discount'],
                     "subtotal" => $transaction['subtotal'],
                     "subtotal_after_discount" => $transaction['subtotal_after_discount'],
-                    "capital_per_item" => $transaction['capital_per_item'],
-                    "capital" => $transaction['capital'],
-                    "profit_per_item" => $transaction['profit_per_item'],
-                    "profit" => $transaction['profit'],
-                    "is_paid" => $transaction['is_paid'],
                     "user_id" => $transactions['user_id'],
                     "customer_id" => $transactions['customer_id'],
                     "product_id" => $transaction['product_id'],

@@ -85,7 +85,7 @@ class TransactionResource extends Resource
                     ->schema([
                         static::getItemsRepeater(),
                     ]),
-            ])->statePath('data');
+            ]);
     }
 
     public static function getItemsRepeater(): TableRepeater
@@ -105,26 +105,11 @@ class TransactionResource extends Resource
                     ->markAsRequired(),
                 Header::make('subtotal')
                     ->label(__('models.transactions.fields.subtotal')),
-                Header::make('discount_per_item')
-                    ->label(__('models.transactions.fields.discount_per_item'))
-                    ->width('150px'),
-                Header::make('total_discount_per_item')
-                    ->label(__('models.transactions.fields.total_discount_per_item'))
-                    ->width('150px'),
                 Header::make('discount')
                     ->label(__('models.transactions.fields.discount'))
                     ->width('150px'),
-                Header::make('total_discount')
-                    ->label(__('models.transactions.fields.total_discount'))
-                    ->width('150px'),
                 Header::make('subtotal_after_discount')
                     ->label(__('models.transactions.fields.subtotal_after_discount')),
-                Header::make('capital')
-                    ->label(__('models.transactions.fields.capital')),
-                Header::make('profit')
-                    ->label(__('models.transactions.fields.profit')),
-                Header::make('is_paid_question')
-                    ->label(__('models.transactions.fields.is_paid_question')),
             ])
             ->schema([
                 // product select
@@ -137,10 +122,9 @@ class TransactionResource extends Resource
                     ->afterStateUpdated(function (Set $set, Get $get, ?int $state) {
                         $product = Product::find($state);
                         $quantity = $get('quantity');
-                        $discountPerItem = $get('discount_per_item');
                         $discount = $get('discount');
 
-                        static::updateData($product, $quantity, $discountPerItem, $discount, $set);
+                        static::updateData($product, $quantity, $discount, $set);
                     })
                     ->required(),
 
@@ -168,10 +152,9 @@ class TransactionResource extends Resource
                     ->afterStateUpdated(function (Set $set, Get $get, ?int $state) {
                         $product = Product::find($get('product_id'));
                         $quantity = $state;
-                        $discountPerItem = $get('discount_per_item');
                         $discount = $get('discount');
 
-                        static::updateData($product, $quantity, $discountPerItem, $discount, $set);
+                        static::updateData($product, $quantity, $discount, $set);
                     })
                     ->disabled(fn(Get $get) => !$get('product_id'))
                     ->required(),
@@ -189,33 +172,6 @@ class TransactionResource extends Resource
                 Forms\Components\Hidden::make('subtotal')
                     ->required(),
 
-                // discount_per_item input
-                Forms\Components\TextInput::make('discount_per_item')
-                    ->label(__('models.transactions.fields.discount_per_item'))
-                    ->live(debounce: 1000)
-                    ->minValue(0)
-                    ->default(0)
-                    ->integer()
-                    ->prefix('Rp')
-                    ->afterStateUpdated(function (Set $set, Get $get, ?int $state) {
-                        $product = Product::find($get('product_id'));
-                        $quantity = $get('quantity');
-                        $discountPerItem = $state;
-                        $discount = $get('discount');
-
-                        static::updateData($product, $quantity, $discountPerItem, $discount, $set);
-                    })
-                    ->disabled(fn(Get $get) => !$get('product_id')),
-
-                // total_discount_per_item display
-                Forms\Components\Placeholder::make("total_discount_per_item_display")
-                    ->label(__('models.transactions.fields.total_discount_per_item'))
-                    ->hiddenLabel()
-                    ->content(function (Get $get) {
-                        $totalDiscountPerItem = $get('total_discount_per_item');
-                        return __("Rp. " . number_format($totalDiscountPerItem, 0, ',', '.'));
-                    }),
-
                 // discount input
                 Forms\Components\TextInput::make('discount')
                     ->label(__('models.transactions.fields.discount'))
@@ -227,21 +183,11 @@ class TransactionResource extends Resource
                     ->afterStateUpdated(function (Set $set, Get $get, ?int $state) {
                         $product = Product::find($get('product_id'));
                         $quantity = $get('quantity');
-                        $discountPerItem = $get('discount_per_item');
                         $discount = $state;
 
-                        static::updateData($product, $quantity, $discountPerItem, $discount, $set);
+                        static::updateData($product, $quantity, $discount, $set);
                     })
                     ->disabled(fn(Get $get) => !$get('product_id')),
-
-                // total_discount display
-                Forms\Components\Placeholder::make("total_discount_display")
-                    ->label(__('models.transactions.fields.total_discount'))
-                    ->hiddenLabel()
-                    ->content(function (Get $get) {
-                        $totalDiscount = $get('total_discount');
-                        return __("Rp. " . number_format($totalDiscount, 0, ',', '.'));
-                    }),
 
                 // subtotal_after_discount display
                 Forms\Components\Placeholder::make("subtotal_after_discount_display")
@@ -255,72 +201,18 @@ class TransactionResource extends Resource
                 // subtotal_after_discount hidden
                 Forms\Components\Hidden::make('subtotal_after_discount')
                     ->required(),
-
-                // capital_per_item hidden
-                Forms\Components\Hidden::make('capital_per_item')
-                    ->required(),
-
-                // capital display
-                Forms\Components\Placeholder::make("capital_display")
-                    ->label(__('models.transactions.fields.capital'))
-                    ->hiddenLabel()
-                    ->content(function (Get $get) {
-                        $profitPerItem = $get('capital');
-                        return __("Rp. " . number_format($profitPerItem, 0, ',', '.'));
-                    }),
-
-                // capital hidden
-                Forms\Components\Hidden::make('capital')
-                    ->required(),
-
-                // profit_per_item hidden
-                Forms\Components\Hidden::make('profit_per_item')
-                    ->required(),
-
-                // profit display
-                Forms\Components\Placeholder::make("profit_display")
-                    ->label(__('models.transactions.fields.profit'))
-                    ->hiddenLabel()
-                    ->content(function (Get $get) {
-                        $profit = $get('profit');
-                        return __("Rp. " . number_format($profit, 0, ',', '.'));
-                    }),
-
-                // profit hidden
-                Forms\Components\Hidden::make('profit')
-                    ->required(),
-
-                // is_paid hidden
-                Forms\Components\Toggle::make('is_paid')
-                    ->label(__('models.transactions.fields.is_paid_question'))
-                    ->onIcon('heroicon-m-check')
-                    ->offIcon('heroicon-m-x-mark')
-                    ->onColor(Color::Sky)
-                    ->offColor(Color::Red),
             ]);
     }
 
-    public static function updateData($product, $quantity, $discountPerItem, $discount, Set $set)
+    public static function updateData($product, $quantity, $discount, Set $set)
     {
         $price = $product?->selling_price ?? 0;
         $subtotal = $price * $quantity;
-        $totalDiscountPerItem = $discountPerItem * $quantity;
-        $totalDiscount = $totalDiscountPerItem + $discount;
-        $subtotalAfterDiscount = $subtotal - $totalDiscount;
-        $capitalPerItem = $product?->purchase_price ?? 0;
-        $capital = $product?->purchase_price * $quantity;
-        $profitPerItem = $price - $capitalPerItem;
-        $profit = $subtotalAfterDiscount - $capital;
+        $subtotalAfterDiscount = $subtotal - $discount;
 
         $set('price', $price);
         $set('subtotal', $subtotal);
         $set('subtotal_after_discount', $subtotalAfterDiscount);
-        $set('total_discount_per_item', $totalDiscountPerItem);
-        $set('total_discount', $totalDiscount);
-        $set('capital_per_item', $capitalPerItem);
-        $set('capital', $capital);
-        $set('profit_per_item', $profitPerItem);
-        $set('profit', $profit);
     }
 
     public static function table(Table $table): Table
@@ -338,28 +230,13 @@ class TransactionResource extends Resource
                             Column::make('product.name')->heading(__('models.products.fields.name')),
                             Column::make('price')->heading(__('models.transactions.fields.price')),
                             Column::make('quantity')->heading(__('models.transactions.fields.quantity')),
-                            Column::make('discount_per_item')->heading(__('models.transactions.fields.discount_per_item')),
-                            Column::make('total_discount_per_item')->heading(__('models.transactions.fields.total_discount_per_item')),
                             Column::make('discount')->heading(__('models.transactions.fields.discount')),
-                            Column::make('total_discount')->heading(__('models.transactions.fields.total_discount')),
                             Column::make('subtotal')->heading(__('models.transactions.fields.subtotal')),
                             Column::make('subtotal_after_discount')->heading(__('models.transactions.fields.subtotal_after_discount')),
-                            Column::make('capital')->heading(__('models.transactions.fields.capital')),
-                            Column::make('profit')->heading(__('models.transactions.fields.profit')),
-                            Column::make('is_paid')->heading(__('models.transactions.fields.is_paid'))
-                                ->formatStateUsing(fn($state) => $state ? __('models.transactions.fields.is_paid_options.paid') : __('models.transactions.fields.is_paid_options.unpaid')),
                         ]),
                 ])->label('Export XLS'),
             ])
             ->columns([
-                Tables\Columns\TextColumn::make('is_paid')
-                    ->label(__('models.transactions.fields.is_paid'))
-                    ->formatStateUsing(fn(bool $state) => $state ? __('models.transactions.fields.is_paid_options.paid') : __('models.transactions.fields.is_paid_options.unpaid'))
-                    ->badge()
-                    ->color(fn(bool $state) => match ($state) {
-                        true => Color::Sky,
-                        false => Color::Red,
-                    }),
                 Tables\Columns\TextColumn::make('purchase_date')
                     ->label(__('models.transactions.fields.purchase_date'))
                     ->date()
@@ -386,17 +263,6 @@ class TransactionResource extends Resource
                         Tables\Columns\Summarizers\Sum::make()
                             ->label('Total ' . __('models.transactions.fields.quantity')),
                     ]),
-                Tables\Columns\TextColumn::make('discount_per_item')
-                    ->label(__('models.transactions.fields.discount_per_item'))
-                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.'))),
-                Tables\Columns\TextColumn::make('total_discount_per_item')
-                    ->label(__('models.transactions.fields.total_discount_per_item'))
-                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
-                    ->summarize([
-                        Tables\Columns\Summarizers\Sum::make()
-                            ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
-                            ->label(__('models.transactions.fields.total_discount_per_item')),
-                    ]),
                 Tables\Columns\TextColumn::make('discount')
                     ->label(__('models.transactions.fields.discount'))
                     ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
@@ -404,14 +270,6 @@ class TransactionResource extends Resource
                         Tables\Columns\Summarizers\Sum::make()
                             ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                             ->label('Total ' . __('models.transactions.fields.discount')),
-                    ]),
-                Tables\Columns\TextColumn::make('total_discount')
-                    ->label(__('models.transactions.fields.total_discount'))
-                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
-                    ->summarize([
-                        Tables\Columns\Summarizers\Sum::make()
-                            ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
-                            ->label(__('models.transactions.fields.total_discount')),
                     ]),
                 Tables\Columns\TextColumn::make('subtotal')
                     ->label(__('models.transactions.fields.subtotal'))
@@ -434,28 +292,6 @@ class TransactionResource extends Resource
                         Tables\Columns\Summarizers\Sum::make()
                             ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
                             ->label('Total ' . __('models.transactions.fields.subtotal_after_discount')),
-                    ]),
-                Tables\Columns\TextColumn::make('capital')
-                    ->label(__('models.transactions.fields.capital'))
-                    ->searchable()
-                    ->sortable()
-                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
-                    ->color(Color::Red)
-                    ->summarize([
-                        Tables\Columns\Summarizers\Sum::make()
-                            ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
-                            ->label(__('models.transactions.fields.capital')),
-                    ]),
-                Tables\Columns\TextColumn::make('profit')
-                    ->label(__('models.transactions.fields.profit'))
-                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
-                    ->searchable()
-                    ->sortable()
-                    ->color(Color::Teal)
-                    ->summarize([
-                        Tables\Columns\Summarizers\Sum::make()
-                            ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
-                            ->label('Total ' . __('models.transactions.fields.profit')),
                     ]),
             ])
             ->filters([
@@ -528,16 +364,6 @@ class TransactionResource extends Resource
                     ->label('Filter'),
             )
             ->actions([
-                Tables\Actions\Action::make('paid')
-                    ->label('Set ' . __('models.transactions.fields.is_paid_options.paid'))
-                    ->requiresConfirmation()
-                    ->visible(fn(Transaction $record) => !$record->is_paid)
-                    ->action(fn(Transaction $record) => $record->update(['is_paid' => true]))
-                    ->button()
-                    ->icon('heroicon-m-check')
-                    ->color(Color::Sky)
-                    ->size(ActionSize::Small)
-                    ->tooltip(__('models.common.set') . ' ' . __('models.transactions.fields.is_paid_options.paid')),
                 Tables\Actions\DeleteAction::make()
                     ->button()
                     ->color(Color::Red)

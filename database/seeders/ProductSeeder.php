@@ -17,35 +17,30 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Laptop Asus ROG',
                 'description' => 'Laptop gaming berkinerja tinggi dengan prosesor terkini',
-                'purchase_price' => 12000000,
                 'selling_price' => 15000000,
                 'user_id' => 2
             ],
             [
                 'name' => 'Smartphone Samsung Galaxy',
                 'description' => 'Ponsel pintar dengan kamera resolusi tinggi',
-                'purchase_price' => 5000000,
                 'selling_price' => 6500000,
                 'user_id' => 2
             ],
             [
                 'name' => 'Printer Epson L3210',
                 'description' => 'Printer inkjet multifungsi untuk kebutuhan kantor',
-                'purchase_price' => 2500000,
                 'selling_price' => 3000000,
                 'user_id' => 2
             ],
             [
                 'name' => 'Monitor LG UltraWide',
                 'description' => 'Monitor lebar dengan kualitas tampilan premium',
-                'purchase_price' => 4000000,
                 'selling_price' => 5000000,
                 'user_id' => 2
             ],
             [
                 'name' => 'Keyboard Mechanical Logitech',
                 'description' => 'Keyboard gaming dengan switch berkualitas tinggi',
-                'purchase_price' => 1500000,
                 'selling_price' => 2000000,
                 'user_id' => 2
             ]

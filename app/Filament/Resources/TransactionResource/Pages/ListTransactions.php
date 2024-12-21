@@ -32,13 +32,4 @@ class ListTransactions extends ListRecords
     {
         return TransactionResource::getWidgets();
     }
-
-    public function getTabs(): array
-    {
-        return [
-            null => Tab::make(trans('models.common.all')),
-            __('models.transactions.fields.is_paid_options.paid') => Tab::make()->query(fn ($query) => $query->where('is_paid', true)),
-            __('models.transactions.fields.is_paid_options.unpaid') => Tab::make()->query(fn ($query) => $query->where('is_paid', false)),
-        ];
-    }
 }

@@ -12,7 +12,6 @@ class Transaction extends Model
     {
         return [
             'purchase_date' => 'date',
-            'is_paid' => 'boolean',
         ];
     }
 

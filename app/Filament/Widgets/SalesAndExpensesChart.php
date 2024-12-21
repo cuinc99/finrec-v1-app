@@ -2,22 +2,20 @@
 
 namespace App\Filament\Widgets;
 
-use Flowframe\Trend\Trend;
+use App\Models\Expense;
 use App\Models\Transaction;
-use Illuminate\Support\Carbon;
-use Flowframe\Trend\TrendValue;
 use Filament\Widgets\ChartWidget;
+use Flowframe\Trend\Trend;
+use Flowframe\Trend\TrendValue;
 use Illuminate\Contracts\Support\Htmlable;
 
-class ProfitChart extends ChartWidget
+class SalesAndExpensesChart extends ChartWidget
 {
     protected static ?string $pollingInterval = null;
 
     protected static ?string $maxHeight = '233px';
 
     protected static ?int $sort = 3;
-
-    protected static string $color = 'success';
 
     public ?string $filter = null;
 
@@ -38,22 +36,41 @@ class ProfitChart extends ChartWidget
     {
         $selectedYear = (int) ($this->filter ?? now()->year);
 
-        $data = Trend::model(Transaction::class)
+        $dataSales = Trend::model(Transaction::class)
             ->dateColumn('purchase_date')
             ->between(
                 start: now()->setYear($selectedYear)->startOfYear(),
                 end: now()->setYear($selectedYear)->endOfYear(),
             )
             ->perMonth()
-            ->sum('profit');
+            ->sum('subtotal_after_discount');
+
+        $dataExpenses = Trend::model(Expense::class)
+            ->dateColumn('purchase_date')
+            ->between(
+                start: now()->setYear($selectedYear)->startOfYear(),
+                end: now()->setYear($selectedYear)->endOfYear(),
+            )
+            ->perMonth()
+            ->sum('price');
 
         return [
             'datasets' => [
                 [
-                    'label' => __('models.widgets.profit_per_month_chart.datasets_label'),
-                    'data' => $data->map(fn (TrendValue $value) => $value->aggregate),
+                    'label' => __('models.widgets.sales_expenses_per_month_chart.datasets_label_sales'),
+                    'data' => $dataSales->map(fn(TrendValue $value) => $value->aggregate),
                     'fill' => 'start',
                     'tension' => 0.3,
+                    'backgroundColor' => 'rgba(75, 192, 192, 0.2)',
+                    'borderColor' => 'rgba(75, 192, 192, 1)',
+                ],
+                [
+                    'label' => __('models.widgets.sales_expenses_per_month_chart.datasets_label_expenses'),
+                    'data' => $dataExpenses->map(fn(TrendValue $value) => $value->aggregate),
+                    'fill' => 'start',
+                    'tension' => 0.3,
+                    'backgroundColor' => 'rgba(255, 99, 132, 0.2)',
+                    'borderColor' => 'rgba(255, 99, 132, 1)',
                 ],
             ],
             'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -67,6 +84,6 @@ class ProfitChart extends ChartWidget
 
     public function getHeading(): string | Htmlable | null
     {
-        return __('models.widgets.profit_per_month_chart.heading');
+        return __('models.widgets.sales_expenses_per_month_chart.heading');
     }
 }
