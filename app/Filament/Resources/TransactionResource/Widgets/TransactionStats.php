@@ -28,14 +28,13 @@ class TransactionStats extends BaseWidget
             Stat::make(
                 label: __('models.transactions.title'),
                 value: number_format((clone $this->getPageTableQuery())->count()))
-                ->icon('heroicon-o-shopping-bag')
+                ->icon('heroicon-m-shopping-cart')
                 ->extraAttributes([
                     'class' => 'bg-transaction',
                 ]),
             Stat::make(
                 label: __('models.common.sold'),
                 value: number_format((clone $this->getPageTableQuery())->sum('quantity')))
-                ->color('warning')
                 ->icon('heroicon-o-chart-bar')
                 ->extraAttributes([
                     'class' => 'bg-sold',
@@ -43,7 +42,6 @@ class TransactionStats extends BaseWidget
             Stat::make(
                 label: __('models.transactions.fields.total_sales'),
                 value: __("Rp. " . number_format((clone $this->getPageTableQuery())->sum('subtotal_after_discount'), 0, ',', '.')))
-                ->color('info')
                 ->icon('heroicon-o-currency-dollar')
                 ->extraAttributes([
                     'class' => 'bg-sales',

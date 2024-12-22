@@ -42,7 +42,6 @@ class SalesAndExpensesTable extends BaseWidget
                         DB::raw('COUNT(*) as total_transactions'),
                         DB::raw('SUM(quantity) as total_products'),
                         DB::raw('SUM(subtotal_after_discount) as total_sales'),
-                        // DB::raw('SUM(profit) as total_profit'),
                     ])
                     ->groupBy('year', 'month')
                     ->orderBy('year', 'asc')
@@ -66,10 +65,6 @@ class SalesAndExpensesTable extends BaseWidget
                     ->label(__('models.transactions.fields.total_sales'))
                     ->formatStateUsing(fn ($state) => "Rp. " . number_format($state, 0, ',', '.'))
                     ->color(Color::Blue),
-                // Tables\Columns\TextColumn::make('total_profit')
-                //     ->label(__('models.transactions.fields.profit'))
-                //     ->formatStateUsing(fn ($state) => "Rp. " . number_format($state, 0, ',', '.'))
-                //     ->color(Color::Teal),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('year')
