@@ -27,5 +27,12 @@ class UserSeeder extends Seeder
             'password' => bcrypt('password'),
             'role' => UserRoleEnum::USER,
         ]);
+
+        User::create([
+            'name' => 'User Demo',
+            'email' => 'demo@demo.com',
+            'password' => bcrypt('password'),
+            'role' => UserRoleEnum::USER,
+        ]);
     }
 }

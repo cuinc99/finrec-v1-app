@@ -17,6 +17,11 @@ class StatsOverviewWidget extends BaseWidget
 
     protected static ?int $sort = 0;
 
+    protected function getColumns(): int
+    {
+        return 4;
+    }
+
     protected function getStats(): array
     {
         $transactions = Transaction::query()
@@ -47,14 +52,16 @@ class StatsOverviewWidget extends BaseWidget
                 fn(Builder $query, $date): Builder => $query->whereDate('purchase_date', '<=', $date),
             );
 
+        $profit = $transactions->sum('subtotal_after_discount') - $expenses->sum('price');
+
         return [
-            Stat::make(
-                label: __('models.transactions.title'),
-                value: number_format((clone $transactions)->count()))
-                ->icon('heroicon-m-shopping-cart')
-                ->extraAttributes([
-                    'class' => 'bg-transaction',
-                ]),
+            // Stat::make(
+            //     label: __('models.transactions.title'),
+            //     value: number_format((clone $transactions)->count()))
+            //     ->icon('heroicon-m-shopping-cart')
+            //     ->extraAttributes([
+            //         'class' => 'bg-transaction',
+            //     ]),
             Stat::make(
                 label: __('models.common.sold'),
                 value: number_format((clone $transactions)->sum('quantity')))
@@ -76,13 +83,13 @@ class StatsOverviewWidget extends BaseWidget
                 ->extraAttributes([
                     'class' => 'bg-expense',
                 ]),
-            // Stat::make(
-            //     label: __('models.transactions.fields.profit'),
-            //     value: __("Rp. " . number_format((clone $transactions)->sum('profit'), 0, ',', '.')))
-            //     ->icon('heroicon-o-presentation-chart-line')
-            //     ->extraAttributes([
-            //         'class' => 'bg-profit',
-            //     ]),
+            Stat::make(
+                label: __('models.transactions.fields.profit'),
+                value: __("Rp. " . number_format($profit, 0, ',', '.')))
+                ->icon('heroicon-o-presentation-chart-line')
+                ->extraAttributes([
+                    'class' => 'bg-profit',
+                ]),
         ];
     }
 }
