@@ -46,7 +46,7 @@ return [
             'subtotal_after_discount' => 'Subtotal Setelah Diskon',
             'product' => 'Produk',
             'customer' => 'Pelanggan',
-            'profit' => 'Profit',
+            'profit' => 'Laba/Rugi',
             'total_sales' => 'Penjualan',
             'total_transactions' => 'Transaksi',
         ],
