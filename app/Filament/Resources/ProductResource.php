@@ -125,6 +125,11 @@ class ProductResource extends Resource
 
     public static function canAccess(): bool
     {
-        return auth()->user()->role->isUser();
+        return auth()->user()->role->isUser() || auth()->user()->role->isFree();
+    }
+
+    public static function canCreate(): bool
+    {
+        return !static::getModel()::isOutOfQuota();
     }
 }

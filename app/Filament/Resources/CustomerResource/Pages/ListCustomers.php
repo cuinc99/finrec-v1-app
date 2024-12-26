@@ -17,7 +17,8 @@ class ListCustomers extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->disabled(fn(): bool => Customer::isOutOfQuota()),
         ];
     }
 
@@ -37,5 +38,18 @@ class ListCustomers extends ListRecords
         }
 
         return $tabs;
+    }
+
+    public function getSubheading(): ?string
+    {
+        return auth()->user()->role->isFree()
+            ? sprintf(
+                __('models.common.free_warning'),
+                Customer::FREE_LIMIT,
+                __('models.customers.title'),
+                Customer::where('user_id', auth()->id())->count(),
+                __('models.customers.title'),
+            )
+            : null;
     }
 }

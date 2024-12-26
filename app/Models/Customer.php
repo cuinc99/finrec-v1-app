@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Customer extends Model
 {
+    const FREE_LIMIT = 10;
+
     protected $guarded = ['id'];
 
     protected function casts(): array
@@ -16,6 +18,17 @@ class Customer extends Model
         return [
             'type' => CustomerTypeEnum::class
         ];
+    }
+
+    public static function isOutOfQuota(): bool
+    {
+        $user = auth()->user();
+
+        if ($user && $user->role->isFree()) {
+            return self::where('user_id', $user->id)->count() >= self::FREE_LIMIT;
+        }
+
+        return false;
     }
 
     public function getTotalTransactionAttribute()

@@ -29,10 +29,10 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
-            'name' => 'User Demo',
+            'name' => 'Demo',
             'email' => 'demo@demo.com',
             'password' => bcrypt('password'),
-            'role' => UserRoleEnum::USER,
+            'role' => UserRoleEnum::FREE,
         ]);
     }
 }

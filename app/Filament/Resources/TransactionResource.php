@@ -38,9 +38,14 @@ class TransactionResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $warning = auth()->user()->role->isFree()
+            ? 'Free users can only create ' . Transaction::FREE_LIMIT . ' transactions. You have created ' . Transaction::where('user_id', auth()->id())->count() . ' transactions.'
+            : null;
+
         return $form
             ->schema([
                 Forms\Components\Section::make()
+                    ->description($warning)
                     ->schema([
                         Forms\Components\Hidden::make('user_id')
                             ->default(auth()->id())
@@ -413,6 +418,11 @@ class TransactionResource extends Resource
 
     public static function canAccess(): bool
     {
-        return auth()->user()->role->isUser();
+        return auth()->user()->role->isUser() || auth()->user()->role->isFree();
+    }
+
+    public static function canCreate(): bool
+    {
+        return !static::getModel()::isOutOfQuota();
     }
 }

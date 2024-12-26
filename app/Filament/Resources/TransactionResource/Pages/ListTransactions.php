@@ -3,9 +3,8 @@
 namespace App\Filament\Resources\TransactionResource\Pages;
 
 use Filament\Actions;
-use Filament\Support\Colors\Color;
+use App\Models\Transaction;
 use Filament\Support\Enums\MaxWidth;
-use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use App\Filament\Resources\TransactionResource;
 use Filament\Pages\Concerns\ExposesTableToWidgets;
@@ -19,7 +18,8 @@ class ListTransactions extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->disabled(fn(): bool => Transaction::isOutOfQuota()),
         ];
     }
 
@@ -31,5 +31,18 @@ class ListTransactions extends ListRecords
     protected function getHeaderWidgets(): array
     {
         return TransactionResource::getWidgets();
+    }
+
+    public function getSubheading(): ?string
+    {
+        return auth()->user()->role->isFree()
+            ? sprintf(
+                __('models.common.free_warning'),
+                Transaction::FREE_LIMIT,
+                __('models.transactions.title'),
+                Transaction::where('user_id', auth()->id())->count(),
+                __('models.transactions.title'),
+            )
+            : null;
     }
 }

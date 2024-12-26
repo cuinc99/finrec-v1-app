@@ -10,12 +10,14 @@ enum UserRoleEnum: string implements HasLabel, HasColor, HasIcon
 {
     case ADMIN = 'Admin';
     case USER = 'User';
+    case FREE = 'Free';
 
     public function getLabel(): string
     {
         return match ($this) {
             self::ADMIN => 'Admin',
             self::USER => 'User',
+            self::FREE => 'Free',
         };
     }
 
@@ -24,6 +26,7 @@ enum UserRoleEnum: string implements HasLabel, HasColor, HasIcon
         return match ($this) {
             self::ADMIN => 'success',
             self::USER => 'info',
+            self::FREE => 'secondary',
         };
     }
 
@@ -32,6 +35,7 @@ enum UserRoleEnum: string implements HasLabel, HasColor, HasIcon
         return match ($this) {
             self::ADMIN => 'heroicon-m-user-group',
             self::USER => 'heroicon-m-user',
+            self::FREE => 'heroicon-m-user',
         };
     }
 
@@ -43,6 +47,11 @@ enum UserRoleEnum: string implements HasLabel, HasColor, HasIcon
     public function isUser(): bool
     {
         return $this === self::USER;
+    }
+
+    public function isFree(): bool
+    {
+        return $this === self::FREE;
     }
 
 }

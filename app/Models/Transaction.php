@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Transaction extends Model
 {
+    const FREE_LIMIT = 100;
+
     protected $guarded = ['id'];
 
     protected function casts(): array
@@ -13,6 +15,17 @@ class Transaction extends Model
         return [
             'purchase_date' => 'date',
         ];
+    }
+
+    public static function isOutOfQuota(): bool
+    {
+        $user = auth()->user();
+
+        if ($user && $user->role->isFree()) {
+            return self::where('user_id', $user->id)->count() >= self::FREE_LIMIT;
+        }
+
+        return false;
     }
 
     public function user(): BelongsTo
