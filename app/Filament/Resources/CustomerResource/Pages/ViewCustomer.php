@@ -2,17 +2,16 @@
 
 namespace App\Filament\Resources\CustomerResource\Pages;
 
-use Filament\Actions;
-use Filament\Support\Enums\MaxWidth;
-use Filament\Resources\Pages\ViewRecord;
-use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Resources\CustomerResource;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Support\Enums\MaxWidth;
+use Illuminate\Contracts\Support\Htmlable;
 
 class ViewCustomer extends ViewRecord
 {
     protected static string $resource = CustomerResource::class;
 
-    public function getTitle(): string | Htmlable
+    public function getTitle(): string|Htmlable
     {
         if (filled(static::$title)) {
             return static::$title;
@@ -25,10 +24,10 @@ class ViewCustomer extends ViewRecord
 
     public static function getNavigationLabel(): string
     {
-        return 'Data ' . __('models.transactions.title');
+        return 'Data '.__('models.transactions.title');
     }
 
-    public static function getNavigationIcon(): string | Htmlable | null
+    public static function getNavigationIcon(): string|Htmlable|null
     {
         return 'heroicon-o-shopping-cart';
     }

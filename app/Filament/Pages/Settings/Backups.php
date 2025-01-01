@@ -9,7 +9,7 @@ class Backups extends BaseBackups
 {
     protected static ?string $navigationIcon = 'heroicon-o-cpu-chip';
 
-    public function getHeading(): string | Htmlable
+    public function getHeading(): string|Htmlable
     {
         return 'Backup Aplikasi';
     }

@@ -39,7 +39,7 @@ class TransactionResource extends Resource
     public static function form(Form $form): Form
     {
         $warning = auth()->user()->role->isFree()
-            ? 'Free users can only create ' . Transaction::FREE_LIMIT . ' transactions. You have created ' . Transaction::where('user_id', auth()->id())->count() . ' transactions.'
+            ? 'Free users can only create '.Transaction::FREE_LIMIT.' transactions. You have created '.Transaction::where('user_id', auth()->id())->count().' transactions.'
             : null;
 
         return $form
@@ -87,7 +87,7 @@ class TransactionResource extends Resource
                             ->modalDescription('__(models.common.reset_action_description).')
                             ->requiresConfirmation()
                             ->color('danger')
-                            ->action(fn(Forms\Set $set) => $set('items', [])),
+                            ->action(fn (Forms\Set $set) => $set('items', [])),
                     ])
                     ->schema([
                         static::getItemsRepeater(),
@@ -136,12 +136,13 @@ class TransactionResource extends Resource
                     ->required(),
 
                 // price display
-                Forms\Components\Placeholder::make("price_display")
+                Forms\Components\Placeholder::make('price_display')
                     ->label(__('models.transactions.fields.price'))
                     ->hiddenLabel()
                     ->content(function (Get $get): string {
                         $price = $get('price');
-                        return __("Rp. " . number_format($price, 0, ',', '.'));
+
+                        return __('Rp. '.number_format($price, 0, ',', '.'));
                     }),
 
                 // price hidden
@@ -163,16 +164,17 @@ class TransactionResource extends Resource
 
                         static::updateData($product, $quantity, $discount, $set);
                     })
-                    ->disabled(fn(Get $get) => !$get('product_id'))
+                    ->disabled(fn (Get $get) => ! $get('product_id'))
                     ->required(),
 
                 // subtotal display
-                Forms\Components\Placeholder::make("subtotal_display")
+                Forms\Components\Placeholder::make('subtotal_display')
                     ->label(__('models.transactions.fields.subtotal'))
                     ->hiddenLabel()
                     ->content(function (Get $get) {
                         $subtotal = $get('subtotal');
-                        return __("Rp. " . number_format($subtotal, 0, ',', '.'));
+
+                        return __('Rp. '.number_format($subtotal, 0, ',', '.'));
                     }),
 
                 // subtotal hideen
@@ -194,15 +196,16 @@ class TransactionResource extends Resource
 
                         static::updateData($product, $quantity, $discount, $set);
                     })
-                    ->disabled(fn(Get $get) => !$get('product_id')),
+                    ->disabled(fn (Get $get) => ! $get('product_id')),
 
                 // subtotal_after_discount display
-                Forms\Components\Placeholder::make("subtotal_after_discount_display")
+                Forms\Components\Placeholder::make('subtotal_after_discount_display')
                     ->label(__('models.transactions.fields.subtotal_after_discount'))
                     ->hiddenLabel()
                     ->content(function (Get $get) {
                         $subtotalAfterDiscount = $get('subtotal_after_discount');
-                        return __("Rp. " . number_format($subtotalAfterDiscount, 0, ',', '.'));
+
+                        return __('Rp. '.number_format($subtotalAfterDiscount, 0, ',', '.'));
                     }),
 
                 // subtotal_after_discount hidden
@@ -228,7 +231,7 @@ class TransactionResource extends Resource
             ->headerActions([
                 ExportAction::make()->exports([
                     ExcelExport::make('table')
-                        ->withFilename(date('Y-m-d') . ' - export_' . __('models.transactions.title'))
+                        ->withFilename(date('Y-m-d').' - export_'.__('models.transactions.title'))
                         ->withWriterType(\Maatwebsite\Excel\Excel::XLSX)
                         ->fromTable()
                         ->withColumns([
@@ -262,43 +265,43 @@ class TransactionResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('price')
                     ->label(__('models.transactions.fields.price'))
-                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.'))),
+                    ->formatStateUsing(fn (string $state): string => __('Rp. '.number_format($state, 0, ',', '.'))),
                 Tables\Columns\TextColumn::make('quantity')
                     ->label(__('models.transactions.fields.quantity'))
                     ->alignCenter()
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
-                            ->label('Total ' . __('models.transactions.fields.quantity')),
+                            ->label('Total '.__('models.transactions.fields.quantity')),
                     ]),
                 Tables\Columns\TextColumn::make('discount')
                     ->label(__('models.transactions.fields.discount'))
-                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
+                    ->formatStateUsing(fn (string $state): string => __('Rp. '.number_format($state, 0, ',', '.')))
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
-                            ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
-                            ->label('Total ' . __('models.transactions.fields.discount')),
+                            ->formatStateUsing(fn (string $state): string => __('Rp. '.number_format($state, 0, ',', '.')))
+                            ->label('Total '.__('models.transactions.fields.discount')),
                     ]),
                 Tables\Columns\TextColumn::make('subtotal')
                     ->label(__('models.transactions.fields.subtotal'))
                     ->searchable()
                     ->sortable()
-                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
+                    ->formatStateUsing(fn (string $state): string => __('Rp. '.number_format($state, 0, ',', '.')))
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
-                            ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
-                            ->label('Total ' . __('models.transactions.fields.subtotal')),
+                            ->formatStateUsing(fn (string $state): string => __('Rp. '.number_format($state, 0, ',', '.')))
+                            ->label('Total '.__('models.transactions.fields.subtotal')),
                     ]),
                 Tables\Columns\TextColumn::make('subtotal_after_discount')
                     ->label(__('models.transactions.fields.subtotal_after_discount'))
                     ->searchable()
                     ->sortable()
-                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
+                    ->formatStateUsing(fn (string $state): string => __('Rp. '.number_format($state, 0, ',', '.')))
                     ->weight('bold')
                     ->color(Color::Blue)
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
-                            ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
-                            ->label('Total ' . __('models.transactions.fields.subtotal_after_discount')),
+                            ->formatStateUsing(fn (string $state): string => __('Rp. '.number_format($state, 0, ',', '.')))
+                            ->label('Total '.__('models.transactions.fields.subtotal_after_discount')),
                     ]),
             ])
             ->filters([
@@ -316,11 +319,11 @@ class TransactionResource extends Resource
                     ->preload()
                     ->hiddenOn(TransactionsRelationManager::class),
                 Tables\Filters\SelectFilter::make('customer_type')
-                    ->label(__('models.customers.fields.type') . ' ' . __('models.transactions.fields.customer'))
+                    ->label(__('models.customers.fields.type').' '.__('models.transactions.fields.customer'))
                     ->options(CustomerTypeEnum::class)
                     ->searchable()
                     ->modifyQueryUsing(function ($query, $data) {
-                        if (!empty($data['value'])) {
+                        if (! empty($data['value'])) {
                             $query->whereHas('customer', function ($query) use ($data) {
                                 $query->where('type', $data);
                             });
@@ -344,20 +347,20 @@ class TransactionResource extends Resource
                         return $query
                             ->when(
                                 $data['created_from'] ?? null,
-                                fn(Builder $query, $date): Builder => $query->whereDate('purchase_date', '>=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('purchase_date', '>=', $date),
                             )
                             ->when(
                                 $data['created_until'] ?? null,
-                                fn(Builder $query, $date): Builder => $query->whereDate('purchase_date', '<=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('purchase_date', '<=', $date),
                             );
                     })
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
                         if ($data['created_from'] ?? null) {
-                            $indicators['created_from'] = __('models.common.created_from') . ' ' . Carbon::parse($data['created_from'])->toFormattedDateString();
+                            $indicators['created_from'] = __('models.common.created_from').' '.Carbon::parse($data['created_from'])->toFormattedDateString();
                         }
                         if ($data['created_until'] ?? null) {
-                            $indicators['created_until'] = __('models.common.created_until') . ' ' . Carbon::parse($data['created_until'])->toFormattedDateString();
+                            $indicators['created_until'] = __('models.common.created_until').' '.Carbon::parse($data['created_until'])->toFormattedDateString();
                         }
 
                         return $indicators;
@@ -366,7 +369,7 @@ class TransactionResource extends Resource
             ->deferFilters()
             ->persistFiltersInSession()
             ->filtersTriggerAction(
-                fn(Tables\Actions\Action $action) => $action
+                fn (Tables\Actions\Action $action) => $action
                     ->button()
                     ->label('Filter'),
             )
@@ -423,6 +426,6 @@ class TransactionResource extends Resource
 
     public static function canCreate(): bool
     {
-        return !static::getModel()::isOutOfQuota();
+        return ! static::getModel()::isOutOfQuota();
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
@@ -32,11 +32,11 @@ class Product extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function transactions($created_from = NULL, $created_until = NULL): HasMany
+    public function transactions($created_from = null, $created_until = null): HasMany
     {
         return $this->hasMany(Transaction::class)
             ->whereNotNull('user_id')
             ->whereNotNull('customer_id')
-            ->when($created_from != NULL && $created_until != NULL, fn ($q) => $q->whereBetween('purchase_date', [$created_from, $created_until]));
+            ->when($created_from != null && $created_until != null, fn ($q) => $q->whereBetween('purchase_date', [$created_from, $created_until]));
     }
 }

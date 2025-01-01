@@ -23,7 +23,7 @@ return [
         ],
         'links' => [
             'view' => 'Data Transaksi',
-        ]
+        ],
     ],
     'products' => [
         'title' => 'Produk',

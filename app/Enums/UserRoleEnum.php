@@ -2,11 +2,11 @@
 
 namespace App\Enums;
 
-use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 
-enum UserRoleEnum: string implements HasLabel, HasColor, HasIcon
+enum UserRoleEnum: string implements HasColor, HasIcon, HasLabel
 {
     case ADMIN = 'Admin';
     case USER = 'User';
@@ -53,5 +53,4 @@ enum UserRoleEnum: string implements HasLabel, HasColor, HasIcon
     {
         return $this === self::FREE;
     }
-
 }

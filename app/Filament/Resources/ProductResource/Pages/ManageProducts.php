@@ -15,7 +15,7 @@ class ManageProducts extends ManageRecords
     {
         return [
             Actions\CreateAction::make()
-                ->disabled(fn(): bool => Product::isOutOfQuota()),
+                ->disabled(fn (): bool => Product::isOutOfQuota()),
         ];
     }
 

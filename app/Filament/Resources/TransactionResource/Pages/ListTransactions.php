@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources\TransactionResource\Pages;
 
-use Filament\Actions;
-use App\Models\Transaction;
-use Filament\Support\Enums\MaxWidth;
-use Filament\Resources\Pages\ListRecords;
 use App\Filament\Resources\TransactionResource;
+use App\Models\Transaction;
+use Filament\Actions;
 use Filament\Pages\Concerns\ExposesTableToWidgets;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Enums\MaxWidth;
 
 class ListTransactions extends ListRecords
 {
@@ -19,7 +19,7 @@ class ListTransactions extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->disabled(fn(): bool => Transaction::isOutOfQuota()),
+                ->disabled(fn (): bool => Transaction::isOutOfQuota()),
         ];
     }
 

@@ -2,15 +2,11 @@
 
 namespace App\Filament\Resources\CustomerResource\RelationManagers;
 
-use Filament\Tables;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use App\Models\Transaction;
-use Filament\Support\Colors\Color;
-use Filament\Support\Enums\ActionSize;
-use Illuminate\Database\Eloquent\Model;
 use App\Filament\Resources\TransactionResource;
+use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class TransactionsRelationManager extends RelationManager
 {
@@ -29,6 +25,6 @@ class TransactionsRelationManager extends RelationManager
 
     public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
-        return 'Data ' . __('models.transactions.title');
+        return 'Data '.__('models.transactions.title');
     }
 }

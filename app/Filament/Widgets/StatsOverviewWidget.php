@@ -27,29 +27,29 @@ class StatsOverviewWidget extends BaseWidget
         $transactions = Transaction::query()
             ->when(
                 $this->filters['product_id'] ?? null,
-                fn(Builder $query, $ids): Builder => $query->whereIn('product_id', $ids),
+                fn (Builder $query, $ids): Builder => $query->whereIn('product_id', $ids),
             )
             ->when(
                 $this->filters['customer_id'] ?? null,
-                fn(Builder $query, $ids): Builder => $query->whereIn('customer_id', $ids),
+                fn (Builder $query, $ids): Builder => $query->whereIn('customer_id', $ids),
             )
             ->when(
                 $this->filters['created_from'] ?? null,
-                fn(Builder $query, $date): Builder => $query->whereDate('purchase_date', '>=', $date),
+                fn (Builder $query, $date): Builder => $query->whereDate('purchase_date', '>=', $date),
             )
             ->when(
                 $this->filters['created_until'] ?? null,
-                fn(Builder $query, $date): Builder => $query->whereDate('purchase_date', '<=', $date),
+                fn (Builder $query, $date): Builder => $query->whereDate('purchase_date', '<=', $date),
             );
 
         $expenses = Expense::query()
             ->when(
                 $this->filters['created_from'] ?? null,
-                fn(Builder $query, $date): Builder => $query->whereDate('purchase_date', '>=', $date),
+                fn (Builder $query, $date): Builder => $query->whereDate('purchase_date', '>=', $date),
             )
             ->when(
                 $this->filters['created_until'] ?? null,
-                fn(Builder $query, $date): Builder => $query->whereDate('purchase_date', '<=', $date),
+                fn (Builder $query, $date): Builder => $query->whereDate('purchase_date', '<=', $date),
             );
 
         $profit = $transactions->sum('subtotal_after_discount') - $expenses->sum('price');
@@ -71,21 +71,21 @@ class StatsOverviewWidget extends BaseWidget
                 ]),
             Stat::make(
                 label: __('models.transactions.fields.total_sales'),
-                value: __("Rp. " . number_format((clone $transactions)->sum('subtotal_after_discount'), 0, ',', '.')))
+                value: __('Rp. '.number_format((clone $transactions)->sum('subtotal_after_discount'), 0, ',', '.')))
                 ->icon('heroicon-o-currency-dollar')
                 ->extraAttributes([
                     'class' => 'bg-sales',
                 ]),
             Stat::make(
                 label: __('models.expenses.title'),
-                value: __("Rp. " . number_format((clone $expenses)->sum('price'), 0, ',', '.')))
+                value: __('Rp. '.number_format((clone $expenses)->sum('price'), 0, ',', '.')))
                 ->icon('heroicon-o-currency-dollar')
                 ->extraAttributes([
                     'class' => 'bg-expense',
                 ]),
             Stat::make(
                 label: __('models.transactions.fields.profit'),
-                value: __("Rp. " . number_format($profit, 0, ',', '.')))
+                value: __('Rp. '.number_format($profit, 0, ',', '.')))
                 ->icon('heroicon-o-presentation-chart-line')
                 ->extraAttributes([
                     'class' => 'bg-profit',

@@ -2,14 +2,13 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Product;
 use Carbon\Carbon;
 use Filament\Tables;
-use App\Models\Product;
 use Filament\Tables\Table;
-use App\Models\Transaction;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Contracts\Support\Htmlable;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\DB;
 
 class ProductSoldTable extends BaseWidget
 {
@@ -49,6 +48,7 @@ class ProductSoldTable extends BaseWidget
                                 })
                                 ->whereMonth('purchase_date', $month)
                                 ->sum('quantity');
+
                             return $total;
                         })
                         ->alignCenter();
@@ -61,12 +61,13 @@ class ProductSoldTable extends BaseWidget
                     ->default($this->year)
                     ->query(function ($query, $data) {
                         $this->year = $data['value'];
+
                         return $query;
                     })
-                    ->selectablePlaceholder(false)
+                    ->selectablePlaceholder(false),
             ])
             ->filtersTriggerAction(
-                fn(Tables\Actions\Action $action) => $action
+                fn (Tables\Actions\Action $action) => $action
                     ->button()
                     ->label('Filter'),
             );
@@ -88,7 +89,7 @@ class ProductSoldTable extends BaseWidget
         return $years;
     }
 
-    protected function getTableHeading(): string | Htmlable | null
+    protected function getTableHeading(): string|Htmlable|null
     {
         return __('models.widgets.product_sold_per_month_chart.heading_table');
     }

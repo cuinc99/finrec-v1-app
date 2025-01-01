@@ -58,7 +58,7 @@ class SalesAndExpensesChart extends ChartWidget
             'datasets' => [
                 [
                     'label' => __('models.widgets.sales_expenses_per_month_chart.datasets_label_sales'),
-                    'data' => $dataSales->map(fn(TrendValue $value) => $value->aggregate),
+                    'data' => $dataSales->map(fn (TrendValue $value) => $value->aggregate),
                     'fill' => 'start',
                     'tension' => 0.3,
                     'backgroundColor' => 'rgba(75, 192, 192, 0.2)',
@@ -66,7 +66,7 @@ class SalesAndExpensesChart extends ChartWidget
                 ],
                 [
                     'label' => __('models.widgets.sales_expenses_per_month_chart.datasets_label_expenses'),
-                    'data' => $dataExpenses->map(fn(TrendValue $value) => $value->aggregate),
+                    'data' => $dataExpenses->map(fn (TrendValue $value) => $value->aggregate),
                     'fill' => 'start',
                     'tension' => 0.3,
                     'backgroundColor' => 'rgba(255, 99, 132, 0.2)',
@@ -82,7 +82,7 @@ class SalesAndExpensesChart extends ChartWidget
         return 'line';
     }
 
-    public function getHeading(): string | Htmlable | null
+    public function getHeading(): string|Htmlable|null
     {
         return __('models.widgets.sales_expenses_per_month_chart.heading');
     }

@@ -2,24 +2,21 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\ExpenseResource\Pages;
+use App\Models\Expense;
+use Awcodes\TableRepeater\Components\TableRepeater;
+use Awcodes\TableRepeater\Header;
 use Carbon\Carbon;
 use Filament\Forms;
-use Filament\Tables;
-use App\Models\Expense;
-use Filament\Forms\Get;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Form;
-use Filament\Tables\Table;
 use Filament\Resources\Resource;
-use Awcodes\TableRepeater\Header;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\ActionSize;
+use Filament\Tables;
 use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\Actions\Action;
-use App\Filament\Resources\ExpenseResource\Pages;
-use Awcodes\TableRepeater\Components\TableRepeater;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\ExpenseResource\RelationManagers;
 
 class ExpenseResource extends Resource
 {
@@ -32,34 +29,34 @@ class ExpenseResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-        ->schema([
-            Forms\Components\Section::make()
-                ->schema([
-                    Forms\Components\Hidden::make('user_id')
-                        ->default(auth()->id())
-                        ->required(),
-                    Forms\Components\DatePicker::make('purchase_date')
-                        ->label(__('models.expenses.fields.purchase_date'))
-                        ->default(now())
-                        ->maxDate(now()->addDay())
-                        ->native(false)
-                        ->displayFormat('d/m/Y')
-                        ->prefixIcon('heroicon-m-calendar-days')
-                        ->required(),
-                ]),
-            Forms\Components\Section::make(__('models.expenses.title'))
-                ->headerActions([
-                    Action::make('reset')
-                        ->modalHeading(__('models.common.reset_action_heading'))
-                        ->modalDescription('__(models.common.reset_action_description).')
-                        ->requiresConfirmation()
-                        ->color('danger')
-                        ->action(fn(Forms\Set $set) => $set('items', [])),
-                ])
-                ->schema([
-                    static::getItemsRepeater(),
-                ]),
-        ]);
+            ->schema([
+                Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\Hidden::make('user_id')
+                            ->default(auth()->id())
+                            ->required(),
+                        Forms\Components\DatePicker::make('purchase_date')
+                            ->label(__('models.expenses.fields.purchase_date'))
+                            ->default(now())
+                            ->maxDate(now()->addDay())
+                            ->native(false)
+                            ->displayFormat('d/m/Y')
+                            ->prefixIcon('heroicon-m-calendar-days')
+                            ->required(),
+                    ]),
+                Forms\Components\Section::make(__('models.expenses.title'))
+                    ->headerActions([
+                        Action::make('reset')
+                            ->modalHeading(__('models.common.reset_action_heading'))
+                            ->modalDescription('__(models.common.reset_action_description).')
+                            ->requiresConfirmation()
+                            ->color('danger')
+                            ->action(fn (Forms\Set $set) => $set('items', [])),
+                    ])
+                    ->schema([
+                        static::getItemsRepeater(),
+                    ]),
+            ]);
     }
 
     public static function getItemsRepeater(): TableRepeater
@@ -106,11 +103,11 @@ class ExpenseResource extends Resource
                     ->label(__('models.expenses.fields.price'))
                     ->searchable()
                     ->sortable()
-                    ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
+                    ->formatStateUsing(fn (string $state): string => __('Rp. '.number_format($state, 0, ',', '.')))
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
-                            ->formatStateUsing(fn(string $state): string => __("Rp. " . number_format($state, 0, ',', '.')))
-                            ->label('Total ' . __('models.expenses.fields.price')),
+                            ->formatStateUsing(fn (string $state): string => __('Rp. '.number_format($state, 0, ',', '.')))
+                            ->label('Total '.__('models.expenses.fields.price')),
                     ]),
             ])
             ->filters([
@@ -131,20 +128,20 @@ class ExpenseResource extends Resource
                         return $query
                             ->when(
                                 $data['created_from'] ?? null,
-                                fn(Builder $query, $date): Builder => $query->whereDate('purchase_date', '>=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('purchase_date', '>=', $date),
                             )
                             ->when(
                                 $data['created_until'] ?? null,
-                                fn(Builder $query, $date): Builder => $query->whereDate('purchase_date', '<=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('purchase_date', '<=', $date),
                             );
                     })
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
                         if ($data['created_from'] ?? null) {
-                            $indicators['created_from'] = __('models.common.created_from') . ' ' . Carbon::parse($data['created_from'])->toFormattedDateString();
+                            $indicators['created_from'] = __('models.common.created_from').' '.Carbon::parse($data['created_from'])->toFormattedDateString();
                         }
                         if ($data['created_until'] ?? null) {
-                            $indicators['created_until'] = __('models.common.created_until') . ' ' . Carbon::parse($data['created_until'])->toFormattedDateString();
+                            $indicators['created_until'] = __('models.common.created_until').' '.Carbon::parse($data['created_until'])->toFormattedDateString();
                         }
 
                         return $indicators;
@@ -153,7 +150,7 @@ class ExpenseResource extends Resource
             ->deferFilters()
             ->persistFiltersInSession()
             ->filtersTriggerAction(
-                fn(Tables\Actions\Action $action) => $action
+                fn (Tables\Actions\Action $action) => $action
                     ->button()
                     ->label('Filter'),
             )

@@ -3,13 +3,9 @@
 namespace App\Filament\Resources\TransactionResource\Widgets;
 
 use App\Filament\Resources\TransactionResource\Pages\ListTransactions;
-use App\Models\Transaction;
-use Filament\Support\Enums\IconPosition;
 use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Flowframe\Trend\Trend;
-use Flowframe\Trend\TrendValue;
 
 class TransactionStats extends BaseWidget
 {
@@ -41,7 +37,7 @@ class TransactionStats extends BaseWidget
                 ]),
             Stat::make(
                 label: __('models.transactions.fields.total_sales'),
-                value: __("Rp. " . number_format((clone $this->getPageTableQuery())->sum('subtotal_after_discount'), 0, ',', '.')))
+                value: __('Rp. '.number_format((clone $this->getPageTableQuery())->sum('subtotal_after_discount'), 0, ',', '.')))
                 ->icon('heroicon-o-currency-dollar')
                 ->extraAttributes([
                     'class' => 'bg-sales',

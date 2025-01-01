@@ -2,10 +2,9 @@
 
 namespace App\Models;
 
-use App\Models\Transaction;
 use App\Enums\CustomerTypeEnum;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Customer extends Model
 {
@@ -16,7 +15,7 @@ class Customer extends Model
     protected function casts(): array
     {
         return [
-            'type' => CustomerTypeEnum::class
+            'type' => CustomerTypeEnum::class,
         ];
     }
 
@@ -51,11 +50,11 @@ class Customer extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function transactions($created_from = NULL, $created_until = NULL): HasMany
+    public function transactions($created_from = null, $created_until = null): HasMany
     {
         return $this->hasMany(Transaction::class)
             ->whereNotNull('user_id')
             ->whereNotNull('product_id')
-            ->when($created_from != NULL && $created_until != NULL, fn ($q) => $q->whereBetween('purchase_date', [$created_from, $created_until]));
+            ->when($created_from != null && $created_until != null, fn ($q) => $q->whereBetween('purchase_date', [$created_from, $created_until]));
     }
 }

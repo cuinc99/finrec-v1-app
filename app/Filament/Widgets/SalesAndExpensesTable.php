@@ -66,7 +66,7 @@ class SalesAndExpensesTable extends BaseWidget
                     ->alignCenter(),
                 Tables\Columns\TextColumn::make('total_sales')
                     ->label(__('models.transactions.fields.total_sales'))
-                    ->formatStateUsing(fn ($state) => 'Rp. ' . number_format($state, 0, ',', '.'))
+                    ->formatStateUsing(fn ($state) => 'Rp. '.number_format($state, 0, ',', '.'))
                     ->color(Color::Blue),
                 Tables\Columns\TextColumn::make('total_expenses')
                     ->label(__('models.expenses.title'))
@@ -74,7 +74,8 @@ class SalesAndExpensesTable extends BaseWidget
                         $totalExpenses = Expense::whereMonth('purchase_date', $record->month)
                             ->whereYear('purchase_date', $record->year)
                             ->sum('price');
-                        return 'Rp. ' . number_format($totalExpenses, 0, ',', '.');
+
+                        return 'Rp. '.number_format($totalExpenses, 0, ',', '.');
                     })
                     ->color(Color::Red),
                 Tables\Columns\TextColumn::make('profit')
@@ -85,7 +86,8 @@ class SalesAndExpensesTable extends BaseWidget
                             ->sum('price');
 
                         $profit = $record->total_sales - $totalExpenses;
-                        return 'Rp. ' . number_format($profit, 0, ',', '.');
+
+                        return 'Rp. '.number_format($profit, 0, ',', '.');
                     })
                     ->color(Color::Sky),
             ])
@@ -124,10 +126,10 @@ class SalesAndExpensesTable extends BaseWidget
 
     public function getTableRecordKey($record): string
     {
-        return $record->year . '-' . str_pad($record->month, 2, '0', STR_PAD_LEFT);
+        return $record->year.'-'.str_pad($record->month, 2, '0', STR_PAD_LEFT);
     }
 
-    protected function getTableHeading(): string | Htmlable | null
+    protected function getTableHeading(): string|Htmlable|null
     {
         return __('models.widgets.sales_expenses_per_month_chart.heading_table');
     }

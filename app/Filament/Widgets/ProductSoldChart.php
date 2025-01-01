@@ -2,11 +2,10 @@
 
 namespace App\Filament\Widgets;
 
-use Flowframe\Trend\Trend;
 use App\Models\Transaction;
-use Illuminate\Support\Carbon;
-use Flowframe\Trend\TrendValue;
 use Filament\Widgets\ChartWidget;
+use Flowframe\Trend\Trend;
+use Flowframe\Trend\TrendValue;
 use Illuminate\Contracts\Support\Htmlable;
 
 class ProductSoldChart extends ChartWidget
@@ -65,7 +64,7 @@ class ProductSoldChart extends ChartWidget
         return 'line';
     }
 
-    public function getHeading(): string | Htmlable | null
+    public function getHeading(): string|Htmlable|null
     {
         return __('models.widgets.product_sold_per_month_chart.heading');
     }

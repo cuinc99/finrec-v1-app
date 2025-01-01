@@ -2,13 +2,13 @@
 
 namespace App\Filament\Resources\CustomerResource\Pages;
 
-use Filament\Actions;
-use App\Models\Customer;
 use App\Enums\CustomerTypeEnum;
+use App\Filament\Resources\CustomerResource;
+use App\Models\Customer;
+use Filament\Actions;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\CustomerResource;
 
 class ListCustomers extends ListRecords
 {
@@ -18,7 +18,7 @@ class ListCustomers extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->disabled(fn(): bool => Customer::isOutOfQuota()),
+                ->disabled(fn (): bool => Customer::isOutOfQuota()),
         ];
     }
 

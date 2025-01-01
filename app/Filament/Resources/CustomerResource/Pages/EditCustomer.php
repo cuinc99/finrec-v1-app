@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources\CustomerResource\Pages;
 
-use Filament\Actions;
-use Filament\Support\Enums\MaxWidth;
-use Filament\Resources\Pages\EditRecord;
 use App\Filament\Resources\CustomerResource;
+use Filament\Actions;
+use Filament\Resources\Pages\EditRecord;
+use Filament\Support\Enums\MaxWidth;
 
 class EditCustomer extends EditRecord
 {
@@ -25,7 +25,7 @@ class EditCustomer extends EditRecord
 
     public static function getNavigationLabel(): string
     {
-        return __('models.common.edit'). ' ' . __('models.customers.title');
+        return __('models.common.edit').' '.__('models.customers.title');
     }
 
     public function getMaxContentWidth(): MaxWidth

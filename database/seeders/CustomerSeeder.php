@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Customer;
 use App\Enums\CustomerTypeEnum;
+use App\Models\Customer;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class CustomerSeeder extends Seeder
 {
@@ -18,28 +17,28 @@ class CustomerSeeder extends Seeder
             [
                 'name' => 'Budi Santoso',
                 'type' => CustomerTypeEnum::RESELLER->value,
-                'user_id' => 2
+                'user_id' => 2,
             ],
             [
                 'name' => 'Siti Rahma',
                 'type' => CustomerTypeEnum::RESELLER->value,
-                'user_id' => 2
+                'user_id' => 2,
             ],
             [
                 'name' => 'Ahmad Wijaya',
                 'type' => CustomerTypeEnum::PEMBELI->value,
-                'user_id' => 2
+                'user_id' => 2,
             ],
             [
                 'name' => 'Dewi Kartika',
                 'type' => CustomerTypeEnum::RESELLER->value,
-                'user_id' => 2
+                'user_id' => 2,
             ],
             [
                 'name' => 'Rudi Hartono',
                 'type' => CustomerTypeEnum::PEMBELI->value,
-                'user_id' => 2
-            ]
+                'user_id' => 2,
+            ],
         ];
 
         foreach ($customers as $customer) {

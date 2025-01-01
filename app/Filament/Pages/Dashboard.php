@@ -34,13 +34,13 @@ class Dashboard extends BaseDashboard
                             ->prefixIcon('heroicon-m-users'),
                         Forms\Components\DatePicker::make('created_from')
                             ->label(__('models.common.created_from'))
-                            ->maxDate(fn(Get $get) => $get('created_until') ?: now())
+                            ->maxDate(fn (Get $get) => $get('created_until') ?: now())
                             ->native(false)
                             ->displayFormat('d/m/Y')
                             ->prefixIcon('heroicon-m-calendar-days'),
                         Forms\Components\DatePicker::make('created_until')
                             ->label(__('models.common.created_until'))
-                            ->minDate(fn(Get $get) => $get('created_from') ?: now())
+                            ->minDate(fn (Get $get) => $get('created_from') ?: now())
                             ->maxDate(now())
                             ->native(false)
                             ->displayFormat('d/m/Y')
