@@ -75,6 +75,7 @@ return [
         ],
     ],
     'common' => [
+        'or_login_with' => 'Atau login dengan',
         'created_at' => 'Dibuat Pada',
         'updated_at' => 'Diperbarui Pada',
         'deleted_at' => 'Dihapus Pada',

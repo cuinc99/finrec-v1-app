@@ -9,9 +9,11 @@
         "php": "^8.3",
         "awcodes/filament-quick-create": "^3.6",
         "awcodes/filament-table-repeater": "^3.1",
+        "codeat3/blade-phosphor-icons": "^2.2",
         "filament/filament": "^3.2",
         "flowframe/laravel-trend": "^0.3.0",
         "laravel/framework": "^11.31",
+        "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.9",
         "pxlrbt/filament-excel": "^2.3",
         "shuvroroy/filament-spatie-laravel-backup": "^2.2"
