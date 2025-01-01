@@ -3,7 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\EditProfile;
-use App\Filament\Pages\Backups;
+use App\Filament\Pages\Settings\Backups;
 use App\Filament\Pages\Dashboard;
 use Awcodes\FilamentQuickCreate\QuickCreatePlugin;
 use Filament\Enums\ThemeMode;
