@@ -7,7 +7,7 @@ use ShuvroRoy\FilamentSpatieLaravelBackup\Pages\Backups as BaseBackups;
 
 class Backups extends BaseBackups
 {
-    protected static ?string $navigationIcon = 'heroicon-o-cpu-chip';
+    protected static ?string $navigationIcon = 'heroicon-m-cpu-chip';
 
     public function getHeading(): string|Htmlable
     {

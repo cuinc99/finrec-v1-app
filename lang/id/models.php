@@ -104,5 +104,11 @@ return [
         'reset_action_description' => 'Semua item yang ada akan direset',
         'set' => 'Tandai sebagai',
         'free_warning' => 'Pengguna gratis hanya dapat membuat %d %s. Anda telah membuat %d %s.',
+        'setting' => 'Pengaturan',
+    ],
+    'navigation_group' => [
+        'master_data' => 'Master Data',
+        'content' => 'Konten',
+        'setting' => 'Pengaturan',
     ],
 ];

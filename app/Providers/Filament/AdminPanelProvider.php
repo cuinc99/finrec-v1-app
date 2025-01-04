@@ -76,9 +76,11 @@ class AdminPanelProvider extends PanelProvider
             // ->databaseNotifications()
             ->navigationGroups([
                 NavigationGroup::make()
-                     ->label('Master Data'),
+                    ->label(__('models.navigation_group.master_data')),
                 NavigationGroup::make()
-                    ->label('Konten'),
+                    ->label(__('models.navigation_group.content')),
+                NavigationGroup::make()
+                    ->label(__('models.navigation_group.setting')),
             ])
             ->plugins([
                 FilamentSpatieLaravelBackupPlugin::make()
