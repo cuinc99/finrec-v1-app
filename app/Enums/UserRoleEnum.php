@@ -26,7 +26,7 @@ enum UserRoleEnum: string implements HasColor, HasIcon, HasLabel
         return match ($this) {
             self::ADMIN => 'success',
             self::USER => 'info',
-            self::FREE => 'secondary',
+            self::FREE => 'warning',
         };
     }
 

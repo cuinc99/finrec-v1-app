@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
-    const FREE_LIMIT = 6;
-
     protected $guarded = ['id'];
+
+    const FREE_LIMIT = 6;
 
     public static function isOutOfQuota(): bool
     {

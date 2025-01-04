@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Customer extends Model
 {
-    const FREE_LIMIT = 10;
-
     protected $guarded = ['id'];
+
+    const FREE_LIMIT = 10;
 
     protected function casts(): array
     {

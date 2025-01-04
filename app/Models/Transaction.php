@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Transaction extends Model
 {
-    const FREE_LIMIT = 100;
-
     protected $guarded = ['id'];
+
+    const FREE_LIMIT = 100;
 
     protected function casts(): array
     {
