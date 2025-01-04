@@ -31,6 +31,8 @@ class CustomerResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
+    protected static ?string $navigationGroup = 'Master Data';
+
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
     public static function form(Form $form): Form

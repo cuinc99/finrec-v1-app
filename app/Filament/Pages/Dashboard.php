@@ -12,6 +12,8 @@ class Dashboard extends BaseDashboard
 {
     use BaseDashboard\Concerns\HasFiltersForm;
 
+    protected static ?string $navigationIcon = 'heroicon-m-home';
+
     public function filtersForm(Form $form): Form
     {
         return $form
