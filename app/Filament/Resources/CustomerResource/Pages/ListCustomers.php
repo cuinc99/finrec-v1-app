@@ -50,6 +50,6 @@ class ListCustomers extends ListRecords
                 Customer::where('user_id', auth()->id())->count(),
                 __('models.customers.title'),
             )
-            : null;
+            : "";
     }
 }

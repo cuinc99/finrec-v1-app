@@ -43,6 +43,6 @@ class ListTransactions extends ListRecords
                 Transaction::where('user_id', auth()->id())->count(),
                 __('models.transactions.title'),
             )
-            : null;
+            : "";
     }
 }

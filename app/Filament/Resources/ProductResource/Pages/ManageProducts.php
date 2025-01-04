@@ -29,6 +29,6 @@ class ManageProducts extends ManageRecords
                 Product::where('user_id', auth()->id())->count(),
                 __('models.products.title'),
             )
-            : null;
+            : "";
     }
 }
